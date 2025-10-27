@@ -15,8 +15,6 @@ import {
 	TrendingUp,
 	X,
 	Menu,
-	HeartHandshake,
-	Microphone,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
@@ -1040,7 +1038,7 @@ const MyAdvancedMiracleWebsite = () => {
 							}}
 							darkMode={darkMode}
 						>
-							ניסי אשתי
+							הניסים של מרגלית
 						</NavButton>
 						<NavButton
 							active={activePage === 'lecture'}
@@ -1069,10 +1067,10 @@ const MyAdvancedMiracleWebsite = () => {
 				<HeroSection>
 					<HeroContent>
 						<HeroTitle>מסע הניסים שלי</HeroTitle>
-						<HeroSubtitle>סיפורים של פעמים שה׳ עשה נסים לשמי</HeroSubtitle>
+						<HeroSubtitle>סיפור החיים והניסים שהשם הרעיף עליי</HeroSubtitle>
 						<HeroButtons>
 							<Button primary onClick={() => setActivePage('community')}>
-								שתפו הנס שלכם
+								שתפו את הנס שלכם
 							</Button>
 							<Button onClick={() => setActivePage('analytics')}>ראו את הניתוח</Button>
 						</HeroButtons>
@@ -1286,7 +1284,7 @@ const MyAdvancedMiracleWebsite = () => {
 										marginBottom: '0.5rem',
 									}}
 								/>
-								<StatValue color='#3b82f6'>30</StatValue>
+								<StatValue color='#3b82f6'>45</StatValue>
 								<StatLabel darkMode={darkMode}>שנים</StatLabel>
 							</StatCard>
 						</StatsGrid>
@@ -1361,7 +1359,7 @@ const MyAdvancedMiracleWebsite = () => {
 											<option>הצלה</option>
 											<option>פרנסה</option>
 											<option>זיווג</option>
-											<option>משפחה</option>
+											<ption>משפחה</ption>
 											<option>אחר</option>
 										</SelectInput>
 									</FormGroup>
