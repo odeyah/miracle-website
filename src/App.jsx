@@ -178,18 +178,23 @@ const Footer = styled.footer`
 const FooterContainer = styled.div`
 	max-width: 1400px;
 	margin: 0 auto;
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	gap: 2rem;
+	display: flex;
+	justify-content: center;
+	gap: 3rem;
 	margin-bottom: 2rem;
+	flex-wrap: wrap;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		gap: 2rem;
+	}
 `;
 
 const FooterSection = styled.div`
 	text-align: center;
-
-	@media (max-width: 768px) {
-		text-align: right;
-	}
+	flex: 1;
+	min-width: 200px;
+	max-width: 300px;
 `;
 
 const FooterTitle = styled.h3`
@@ -387,7 +392,7 @@ function App() {
 	const pages = [
 		{ id: 'home', label: 'בית', icon: Home },
 		{ id: 'my-miracles', label: 'הניסים שלי', icon: BookOpen },
-		{ id: 'margalits-miracles', label: 'ניסי אשתי', icon: Heart },
+		{ id: 'margalits-miracles', label: 'הניסים של מרגלית', icon: Heart },
 		{ id: 'community', label: 'קהילה', icon: Users, notifications: unreadNotifications },
 		{ id: 'lecture-booking', label: 'הזמן הרצאה', icon: Phone },
 	];
@@ -481,7 +486,11 @@ function App() {
 					{/* About Section */}
 					<FooterSection>
 						<FooterTitle>🙏 אודה-י-ה ומרגלית</FooterTitle>
-						<FooterText>שותפים בשיתוף סיפורי הניסים שה׳ עוזר לנו בחיינו. כאן תוכלו למצוא השראה וחוזק.</FooterText>
+						<FooterText>
+							<FooterText>
+								שותפים בהפצת סיפורי הניסים שה׳ עושה עמנו בכל יום. כאן תוכלו למצוא השראה, אמונה וחיזוק ללב.
+							</FooterText>
+						</FooterText>
 					</FooterSection>
 
 					{/* Quick Links */}
@@ -489,7 +498,7 @@ function App() {
 						<FooterTitle>קישורים</FooterTitle>
 						<FooterLink onClick={() => navigatePage('home')}>בית</FooterLink>
 						<FooterLink onClick={() => navigatePage('my-miracles')}>הניסים שלי</FooterLink>
-						<FooterLink onClick={() => navigatePage('margalits-miracles')}>ניסי אשתי</FooterLink>
+						<FooterLink onClick={() => navigatePage('margalits-miracles')}>הניסים של מרגלית</FooterLink>
 						<FooterLink onClick={() => navigatePage('community')}>קהילה</FooterLink>
 					</FooterSection>
 

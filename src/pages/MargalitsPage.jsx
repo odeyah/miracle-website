@@ -308,7 +308,6 @@ const MargalitsPage = ({ darkMode }) => {
 				),
 				category: 'משפחה',
 				icon: '👶',
-				impact: 10,
 				views: 567,
 				favorite: true,
 			},
@@ -327,7 +326,6 @@ const MargalitsPage = ({ darkMode }) => {
 				),
 				category: 'רפואה',
 				icon: '💪',
-				impact: 10,
 				views: 456,
 				favorite: true,
 			},
@@ -343,7 +341,6 @@ const MargalitsPage = ({ darkMode }) => {
 				),
 				category: 'משפחה',
 				icon: '💕',
-				impact: 10,
 				views: 678,
 				favorite: true,
 			},
@@ -354,7 +351,6 @@ const MargalitsPage = ({ darkMode }) => {
 				story: 'לאחר שנים של אימון לזוגיות והכנה נפשית, הגעתי למקום של קבלה מלאה של כל הניסיונות. זה היה נס רוחני גדול.',
 				category: 'רוחניות',
 				icon: '🙏',
-				impact: 9,
 				views: 345,
 				favorite: false,
 			},
@@ -365,7 +361,6 @@ const MargalitsPage = ({ darkMode }) => {
 				story: 'לאחר חודשים של חיפוש, מצאנו את הדירה המושלמת בתוקף החוק ובתקציב שלנו. ה׳ זרם לנו את הדיוג בדיוק בזמן הנכון.',
 				category: 'דיור',
 				icon: '🏡',
-				impact: 8,
 				views: 234,
 				favorite: false,
 			},
@@ -383,7 +378,6 @@ const MargalitsPage = ({ darkMode }) => {
 				),
 				category: 'רפואה',
 				icon: '🌈',
-				impact: 9,
 				views: 567,
 				favorite: true,
 			},
@@ -394,7 +388,6 @@ const MargalitsPage = ({ darkMode }) => {
 				story: 'למדתי שכל מה שיש לנו הוא מתנה מה׳ ולא מגיע. זה שינה את כל הדרך שלי בחיים להערכה והודיה.',
 				category: 'רוחניות',
 				icon: '✨',
-				impact: 8,
 				views: 290,
 				favorite: false,
 			},
@@ -412,7 +405,6 @@ const MargalitsPage = ({ darkMode }) => {
 				),
 				category: 'גאולה',
 				icon: '🌅',
-				impact: 9,
 				views: 456,
 				favorite: true,
 			},
@@ -436,7 +428,6 @@ const MargalitsPage = ({ darkMode }) => {
 	const sortedMiracles = useMemo(() => {
 		const sorted = [...filteredMiracles];
 		if (sortBy === 'date') sorted.reverse();
-		else if (sortBy === 'impact') sorted.sort((a, b) => b.impact - a.impact);
 		else if (sortBy === 'views') sorted.sort((a, b) => b.views - a.views);
 		return sorted;
 	}, [filteredMiracles, sortBy]);
@@ -453,7 +444,6 @@ const MargalitsPage = ({ darkMode }) => {
 	const stats = useMemo(() => {
 		return {
 			total: margalifsMiracles.length,
-			avgImpact: (margalifsMiracles.reduce((sum, m) => sum + m.impact, 0) / margalifsMiracles.length).toFixed(1),
 			totalFavorites: favorites.length,
 			totalViews: margalifsMiracles.reduce((sum, m) => sum + m.views, 0),
 		};
@@ -464,10 +454,10 @@ const MargalitsPage = ({ darkMode }) => {
 			<PageHeader>
 				<PageTitle darkMode={darkMode}>
 					<HeaderDecoration>💕</HeaderDecoration>
-					ניסי אשתי - מרגלית
+					הניסים של מרגלית - מרגלית
 					<HeaderDecoration>💕</HeaderDecoration>
 				</PageTitle>
-				<PageSubtitle darkMode={darkMode}>סיפורי הניסים היפים של אשתי יקירה</PageSubtitle>
+				<PageSubtitle darkMode={darkMode}>סיפורי הניסים היפים של אשתי היקרה</PageSubtitle>
 			</PageHeader>
 
 			{/* Stats */}
@@ -475,10 +465,6 @@ const MargalitsPage = ({ darkMode }) => {
 				<StatCard>
 					<StatValue>{stats.total}</StatValue>
 					<StatLabel>סה"כ ניסים</StatLabel>
-				</StatCard>
-				<StatCard>
-					<StatValue>{stats.avgImpact}</StatValue>
-					<StatLabel>ממוצע השפעה</StatLabel>
 				</StatCard>
 				<StatCard>
 					<StatValue>{stats.totalFavorites}</StatValue>
@@ -508,7 +494,6 @@ const MargalitsPage = ({ darkMode }) => {
 				</SelectInput>
 				<SelectInput value={sortBy} onChange={e => setSortBy(e.target.value)} darkMode={darkMode}>
 					<option value='date'>מהחדש ביותר</option>
-					<option value='impact'>לפי השפעה</option>
 					<option value='views'>לפי צפיות</option>
 				</SelectInput>
 			</FilterSection>
@@ -535,10 +520,6 @@ const MargalitsPage = ({ darkMode }) => {
 								</div>
 							</MiracleInfo>
 							<MiracleStats>
-								<Stat darkMode={darkMode}>
-									<Star size={16} />
-									{miracle.impact}
-								</Stat>
 								<Stat darkMode={darkMode}>
 									<Users size={16} />
 									{miracle.views}

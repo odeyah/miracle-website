@@ -4,16 +4,16 @@ import { ArrowRight } from 'lucide-react';
 
 const HeroSection = styled.section`
 	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-	padding: 6rem 1rem;
+	padding: 3rem 1rem;
 	text-align: center;
 	color: white;
-	min-height: 80vh;
+	min-height: 20vh;
 	display: flex;
 	align-items: center;
 `;
 
 const HeroContent = styled.div`
-	max-width: 800px;
+	max-width: 900px;
 	margin: 0 auto;
 `;
 
@@ -114,14 +114,17 @@ const HomePage = ({ darkMode, onNavigate }) => {
 		<>
 			<HeroSection>
 				<HeroContent>
-					<HeroTitle>מסע הניסים שלנו</HeroTitle>
-					<HeroSubtitle>סיפורים של פעמים שה׳ עשה נסים לשמנו</HeroSubtitle>
+					<HeroTitle>השם איתנו אז הניסים לא נגמרים</HeroTitle>
+					<HeroSubtitle>
+						ברוכים הבאים למקום של אמונה, תודה וניסים. כאן תמצאו את סיפורי הניסים האישיים שלי ושל מרגלית, וגם את ניסי הקהילה –
+						סיפורים אמיתיים של אנשים שראו את יד ה׳ בחייהם. המטרה שלנו היא להזכיר לכולנו שה׳ תמיד איתנו, ותמיד יש תקווה, אמונה
+						ואור.
+					</HeroSubtitle>
 					<HeroButtons>
 						<Button primary onClick={() => onNavigate('my-miracles')}>
 							הניסים שלי
-							<ArrowRight size={20} />
 						</Button>
-						<Button onClick={() => onNavigate('margalits-miracles')}>ניסי אשתי</Button>
+						<Button onClick={() => onNavigate('margalits-miracles')}>הניסים של מרגלית</Button>
 					</HeroButtons>
 				</HeroContent>
 			</HeroSection>
