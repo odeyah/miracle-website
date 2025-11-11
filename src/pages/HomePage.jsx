@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ArrowRight } from 'lucide-react';
 
 const HeroSection = styled.section`
 	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
