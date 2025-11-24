@@ -496,10 +496,10 @@ function App() {
 					{/* Quick Links */}
 					<FooterSection>
 						<FooterTitle>קישורים</FooterTitle>
-						<FooterLink onClick={() => navigatePage('home')}>בית</FooterLink>
 						<FooterLink onClick={() => navigatePage('my-miracles')}>הניסים שלי</FooterLink>
 						<FooterLink onClick={() => navigatePage('margalits-miracles')}>הניסים של מרגלית</FooterLink>
 						<FooterLink onClick={() => navigatePage('community')}>קהילה</FooterLink>
+						<FooterLink onClick={() => navigatePage('lecture-booking')}>הזמן הרצאה</FooterLink>
 					</FooterSection>
 
 					{/* Contact Section */}
@@ -508,7 +508,7 @@ function App() {
 						<FooterText>
 							דוא"ל: ourMiracles@proton.me
 							<br />
-							טלפון: 050-1234567
+							טלפון: 052-4441093
 							<br />
 							ירושלים, ישראל
 						</FooterText>
@@ -517,7 +517,7 @@ function App() {
 
 				{/* Footer Bottom */}
 				<FooterBottom>
-					<BottomLine>© 2024 מסע הניסים שלנו | כל הזכויות שמורות</BottomLine>
+					<BottomLine>© 2025 מסע הניסים שלנו | כל הזכויות שמורות</BottomLine>
 					<BottomLine>"מודים אנחנו לך ה׳ אלוהינו על כל הניסים שבכל יום עמנו"</BottomLine>
 					<BottomLine>
 						<Badge>v1.0.0</Badge>

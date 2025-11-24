@@ -509,7 +509,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 		],
 		[],
 	);
-
 	// עדכון צפיות כשמרחיבים נס
 	const handleExpandMiracle = async miracleId => {
 		setExpandedMiracle(expandedMiracle === miracleId ? null : miracleId);
@@ -531,7 +530,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 			}
 		}
 	};
-
 	// Filter and search miracles
 	const filteredMiracles = useMemo(() => {
 		return myMiracles.filter(miracle => {
@@ -689,7 +687,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 			<PsalmSection>
 				<PsalmTitle>🙏 מזמור לתודה - מזמור ק בתהילים</PsalmTitle>
 				<PsalmText>
-					אמִזְמ֥וֹר לְתוֹדָ֑ה הָרִ֥יעוּ לַ֝יהֹוָ֗ה כׇּל־הָאָֽרֶץ׃ עִבְד֣וּ אֶת־יְהֹוָ֣ה בְּשִׂמְחָ֑ה בֹּ֥אוּ לְ֝פָנָ֗יו
+					מִזְמ֥וֹר לְתוֹדָ֑ה הָרִ֥יעוּ לַ֝יהֹוָ֗ה כׇּל־הָאָֽרֶץ׃ עִבְד֣וּ אֶת־יְהֹוָ֣ה בְּשִׂמְחָ֑ה בֹּ֥אוּ לְ֝פָנָ֗יו
 					בִּרְנָנָֽה׃ דְּע֗וּ כִּֽי־יְהֹוָה֮ ה֤וּא אֱלֹ֫הִ֥ים הֽוּא־עָ֭שָׂנוּ (ולא) [וְל֣וֹ] אֲנַ֑חְנוּ עַ֝מּ֗וֹ וְצֹ֣אן
 					מַרְעִיתֽוֹ׃ בֹּ֤אוּ שְׁעָרָ֨יו בְּתוֹדָ֗ה חֲצֵרֹתָ֥יו בִּתְהִלָּ֑ה הוֹדוּ־ל֝֗וֹ בָּרְכ֥וּ שְׁמֽוֹ׃ כִּי־ט֣וֹב
 					יְ֭הֹוָה לְעוֹלָ֣ם חַסְדּ֑וֹ וְעַד־דֹּ֥ר וָ֝דֹ֗ר אֱמוּנָתֽוֹ׃
