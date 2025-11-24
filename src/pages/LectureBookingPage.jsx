@@ -266,11 +266,7 @@ const LectureBookingPage = ({ darkMode }) => {
 שם המבקש: ${formData.name}
 דוא"ל: ${formData.email}
 טלפון: ${formData.phone}
-<<<<<<< HEAD
 מוסר ההרצאה: ${formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד'}
-=======
-דובר ההרצאה: ${formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד'}
->>>>>>> f65f93cb960074f022a38842301a8d2427fde34e
 תאריך מבוקש: ${formData.date}
 מיקום: ${formData.location}
 מספר אורחים משוער: ${formData.guestCount}
