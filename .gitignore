@@ -1,0 +1,6 @@
+﻿node_modules/
+build/
+.cache/
+.eslintcache
+dist/
+.DS_Store
