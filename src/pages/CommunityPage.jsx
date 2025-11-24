@@ -782,7 +782,7 @@ ${formData.story}
 					) : (
 						<EmptyState darkMode={darkMode}>
 							<div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📭</div>
-							<p>אין סיפורים מופרסמים עדיין. היה הראשון ששתף!</p>
+							<p>אין סיפורים מופרסמים עדיין. היה הראשון שמשתף!</p>
 						</EmptyState>
 					)}
 				</StoriesColumn>
