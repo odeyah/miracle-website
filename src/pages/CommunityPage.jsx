@@ -572,7 +572,7 @@ ${formData.story}
 		`;
 
 		const subject = `נס חדש בהמתנה - ${formData.title}`;
-		const mailtoLink = `mailto:miracles@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+		const mailtoLink = `mailto:ourMiracles@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
 			emailBody,
 		)}`;
 

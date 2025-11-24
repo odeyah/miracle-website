@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { Heart, Users, ChevronDown } from 'lucide-react';
+import { db } from '../firebase';
+import { doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 
 // ==================== STYLED COMPONENTS ====================
 
@@ -294,8 +296,36 @@ const MyMiraclesPage = ({ darkMode }) => {
 	const [selectedCategory, setSelectedCategory] = useState('all');
 	const [sortBy, setSortBy] = useState('date');
 	const [favorites, setFavorites] = useLocalStorage('my-miracles-favorites', []);
+	const [firebaseViews, setFirebaseViews] = useState({});
+	const [firebaseLikes, setFirebaseLikes] = useState({});
 
 	const debouncedSearch = useDebounce(searchQuery, 300);
+
+	// טעון נתונים מ-Firebase בעת טעינה
+	useEffect(() => {
+		const loadFirebaseData = async () => {
+			const viewsData = {};
+			const likesData = {};
+
+			for (let i = 1; i <= 8; i++) {
+				try {
+					const docSnap = await getDoc(doc(db, 'miracles', i.toString()));
+					if (docSnap.exists()) {
+						const data = docSnap.data();
+						viewsData[i] = data.views || 0;
+						likesData[i] = data.likes || 0;
+					}
+				} catch (error) {
+					console.error(`Error loading miracle ${i}:`, error);
+				}
+			}
+
+			setFirebaseViews(viewsData);
+			setFirebaseLikes(likesData);
+		};
+
+		loadFirebaseData();
+	}, []);
 
 	// Your miracles data
 	const myMiracles = useMemo(
@@ -314,7 +344,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 				),
 				category: 'משפחה',
 				icon: '👨‍👩‍👦',
-				views: 145,
 				favorite: false,
 			},
 			{
@@ -331,7 +360,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 				),
 				category: 'גאולה',
 				icon: './Solvation.ico',
-				views: 145,
 				favorite: false,
 			},
 			{
@@ -357,8 +385,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 				),
 				category: 'משפחה',
 				icon: '💑💖',
-				views: 512,
-				favorite: true,
+				favorite: false,
 			},
 			{
 				id: 4,
@@ -376,7 +403,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 				),
 				category: 'משפחה',
 				icon: '👥',
-				views: 267,
 				favorite: false,
 			},
 			{
@@ -395,8 +421,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 				),
 				category: 'משפחה',
 				icon: '💑',
-				views: 456,
-				favorite: true,
+				favorite: false,
 			},
 			{
 				id: 6,
@@ -416,7 +441,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 				),
 				category: 'הילדות שלי',
 				icon: '📚',
-				views: 189,
 				favorite: false,
 			},
 			{
@@ -449,8 +473,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 				),
 				category: 'רפואה',
 				icon: '👶',
-				views: 298,
-				favorite: true,
+				favorite: false,
 			},
 			{
 				id: 8,
@@ -481,20 +504,38 @@ const MyMiraclesPage = ({ darkMode }) => {
 				),
 				category: 'התנהגות מוזרה',
 				icon: '🤰',
-				views: 342,
 				favorite: false,
 			},
 		],
 		[],
 	);
 
+	// עדכון צפיות כשמרחיבים נס
+	const handleExpandMiracle = async miracleId => {
+		setExpandedMiracle(expandedMiracle === miracleId ? null : miracleId);
+
+		// רק עדכן אם פותחים (לא סוגרים)
+		if (expandedMiracle !== miracleId) {
+			try {
+				await updateDoc(doc(db, 'miracles', miracleId.toString()), {
+					views: increment(1),
+				});
+
+				// עדכן state מקומי
+				setFirebaseViews(prev => ({
+					...prev,
+					[miracleId]: (prev[miracleId] || 0) + 1,
+				}));
+			} catch (error) {
+				console.error('Error updating views:', error);
+			}
+		}
+	};
+
 	// Filter and search miracles
 	const filteredMiracles = useMemo(() => {
 		return myMiracles.filter(miracle => {
-			const matchesSearch =
-				debouncedSearch === '' ||
-				miracle.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-				(typeof miracle.story === 'string' && miracle.story.toLowerCase().includes(debouncedSearch.toLowerCase()));
+			const matchesSearch = debouncedSearch === '' || miracle.title.toLowerCase().includes(debouncedSearch.toLowerCase());
 			const matchesCategory = selectedCategory === 'all' || miracle.category === selectedCategory;
 			return matchesSearch && matchesCategory;
 		});
@@ -504,26 +545,44 @@ const MyMiraclesPage = ({ darkMode }) => {
 	const sortedMiracles = useMemo(() => {
 		const sorted = [...filteredMiracles];
 		if (sortBy === 'date') sorted.reverse();
-		else if (sortBy === 'views') sorted.sort((a, b) => b.views - a.views);
+		else if (sortBy === 'views') sorted.sort((a, b) => (firebaseViews[b.id] || 0) - (firebaseViews[a.id] || 0));
 		return sorted;
-	}, [filteredMiracles, sortBy]);
+	}, [filteredMiracles, sortBy, firebaseViews]);
 
 	// Toggle favorite
-	const toggleFavorite = id => {
-		setFavorites(favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id]);
+	const toggleFavorite = async id => {
+		const isFavorited = favorites.includes(id);
+		const newFavorites = isFavorited ? favorites.filter(f => f !== id) : [...favorites, id];
+		setFavorites(newFavorites);
+
+		try {
+			await updateDoc(doc(db, 'miracles', id.toString()), {
+				likes: increment(isFavorited ? -1 : 1),
+			});
+
+			setFirebaseLikes(prev => ({
+				...prev,
+				[id]: (prev[id] || 0) + (isFavorited ? -1 : 1),
+			}));
+		} catch (error) {
+			console.error('Error updating likes:', error);
+		}
 	};
 
 	// Get unique categories
 	const categoryOptions = ['all', ...new Set(myMiracles.map(m => m.category))];
 
 	// Calculate stats
+	// Calculate stats
 	const stats = useMemo(() => {
+		const totalViews = Object.values(firebaseViews).reduce((a, b) => a + b, 0);
+		const totalLikes = Object.values(firebaseLikes).reduce((a, b) => a + b, 0);
 		return {
 			total: myMiracles.length,
-			totalFavorites: favorites.length,
-			totalViews: myMiracles.reduce((sum, m) => sum + m.views, 0),
+			totalFavorites: totalLikes,
+			totalViews: totalViews,
 		};
-	}, [myMiracles, favorites]);
+	}, [firebaseViews, firebaseLikes, myMiracles]);
 
 	return (
 		<PageSection>
@@ -537,7 +596,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 				</StatCard>
 				<StatCard darkMode={darkMode}>
 					<StatValue color='#ec4899'>{stats.totalFavorites}</StatValue>
-					<StatLabel darkMode={darkMode}>מועדפים</StatLabel>
+					<StatLabel darkMode={darkMode}>לבבות</StatLabel>
 				</StatCard>
 				<StatCard darkMode={darkMode}>
 					<StatValue color='#3b82f6'>{stats.totalViews}</StatValue>
@@ -571,7 +630,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 			{sortedMiracles.length > 0 ? (
 				sortedMiracles.map(miracle => (
 					<MiracleCard key={miracle.id} darkMode={darkMode}>
-						<MiracleCardHeader onClick={() => setExpandedMiracle(expandedMiracle === miracle.id ? null : miracle.id)}>
+						<MiracleCardHeader onClick={() => handleExpandMiracle(miracle.id)}>
 							<MiracleIcon>
 								{miracle.icon.endsWith('.ico') || miracle.icon.endsWith('.png') || miracle.icon.endsWith('.jpg') ? (
 									<img src={miracle.icon} alt='icon' />
@@ -591,7 +650,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 							<MiracleStats>
 								<Stat darkMode={darkMode}>
 									<Users size={16} />
-									{miracle.views}
+									{firebaseViews[miracle.id] || 0}
 								</Stat>
 								<IconButton
 									darkMode={darkMode}
@@ -630,14 +689,13 @@ const MyMiraclesPage = ({ darkMode }) => {
 			<PsalmSection>
 				<PsalmTitle>🙏 מזמור לתודה - מזמור ק בתהילים</PsalmTitle>
 				<PsalmText>
-					מִזְמ֥וֹר לְתוֹדָ֑ה הָרִ֥יעוּ לַ֝יהֹוָ֗ה כׇּל־הָאָֽרֶץ׃ עִבְד֣וּ אֶת־יְהֹוָ֣ה בְּשִׂמְחָ֑ה בֹּ֥אוּ לְ֝פָנָ֗יו
-					בִּרְנָנָֽה׃ דְּע֗וּ כִּֽי־יְהֹוָה֮ ה֤וּא אֱלֹ֫הִ֥ים הֽוּא־עָ֭שָׂנוּ (ולא) [וְל֣וֹ] אֲנַ֑חְנוּ עַ֝מּ֗וֹ וְצֹ֣אן
-					מַרְעִיתֽוֹ׃ בֹּ֤אוּ שְׁעָרָ֨יו בְּתוֹדָ֗ה חֲצֵרֹתָ֥יו בִּתְהִלָּ֑ה הוֹדוּ־ל֝֗וֹ בָּרְכ֥וּ שְׁמֽוֹ׃ כִּי־ט֣וֹב
-					יְ֭הֹוָה לְעוֹלָ֣ם חַסְדּ֑וֹ וְעַד־דֹּ֥ר וָ֝דֹ֗ר אֱמוּנָתֽוֹ׃
+					אמִזְמ֥וֹר לְתוֹדָ֑ה הָרִ֥יעוּ לַ֝יהֹוָ֗ה כׇּל־הָאָֽרֶץ׃ עִבְד֣וּ אֶת־יְהֹוָ֣ה בְּשִׂמְחָ֑ה בֹּ֥אוּ לְ֝פָנָ֗יו
+					בִּרְנָנָֽה׃ דְּע֗וּ כִּֽי־יְהֹוָה֮ ה֤וּא אֱלֹ֫הִ֥ים הֽוּא־עָ֭שָׂנוּ (ולא) [וְל֣וֹ] אֲנַ֑חְנוּ עַ֝מּ֗וֹ וְצֹ֣אן
+					מַרְעִיתֽוֹ׃ בֹּ֤אוּ שְׁעָרָ֨יו בְּתוֹדָ֗ה חֲצֵרֹתָ֥יו בִּתְהִלָּ֑ה הוֹדוּ־ל֝֗וֹ בָּרְכ֥וּ שְׁמֽוֹ׃ כִּי־ט֣וֹב
+					יְ֭הֹוָה לְעוֹלָ֣ם חַסְדּ֑וֹ וְעַד־דֹּ֥ר וָ֝דֹ֗ר אֱמוּנָתֽוֹ׃
 				</PsalmText>
 			</PsalmSection>
 		</PageSection>
 	);
 };
-
 export default MyMiraclesPage;

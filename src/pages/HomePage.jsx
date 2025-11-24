@@ -123,7 +123,15 @@ const HomePage = ({ darkMode, onNavigate }) => {
 						<Button primary onClick={() => onNavigate('my-miracles')}>
 							הניסים שלי
 						</Button>
-						<Button onClick={() => onNavigate('margalits-miracles')}>הניסים של מרגלית</Button>
+						<Button primary onClick={() => onNavigate('margalits-miracles')}>
+							הניסים של מרגלית
+						</Button>
+						<Button primary onClick={() => onNavigate('community')}>
+							קהילת הניסים שלנו
+						</Button>
+						<Button primary onClick={() => onNavigate('lecture-booking')}>
+							הזמנת הרצאה
+						</Button>
 					</HeroButtons>
 				</HeroContent>
 			</HeroSection>

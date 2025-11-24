@@ -506,7 +506,7 @@ function App() {
 					<FooterSection>
 						<FooterTitle>📞 יצירת קשר</FooterTitle>
 						<FooterText>
-							דוא"ל: miracles@example.com
+							דוא"ל: ourMiracles@proton.me
 							<br />
 							טלפון: 050-1234567
 							<br />
