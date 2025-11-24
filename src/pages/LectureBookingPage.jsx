@@ -266,7 +266,7 @@ const LectureBookingPage = ({ darkMode }) => {
 שם המבקש: ${formData.name}
 דוא"ל: ${formData.email}
 טלפון: ${formData.phone}
-מטבח ההרצאה: ${formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד'}
+דובר ההרצאה: ${formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד'}
 תאריך מבוקש: ${formData.date}
 מיקום: ${formData.location}
 מספר אורחים משוער: ${formData.guestCount}
@@ -276,7 +276,7 @@ ${formData.message}
 
 		// Create mailto link
 		const subject = `בקשת הרצאה - ${formData.name}`;
-		const mailtoLink = `mailto:miracles@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+		const mailtoLink = `mailto:ourMiracles@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
 			emailBody,
 		)}`;
 
@@ -382,7 +382,7 @@ ${formData.message}
 						<FormGroupGrid>
 							<FormGroup>
 								<FormLabel darkMode={darkMode}>
-									בחר מטבח <Required>*</Required>
+									בחר מרצה <Required>*</Required>
 								</FormLabel>
 								<FormSelect name='speaker' value={formData.speaker} onChange={handleChange} darkMode={darkMode}>
 									<option value='both'>שנינו יחד</option>
@@ -455,11 +455,11 @@ ${formData.message}
 						<ContactSpace>
 							<ContactItem>
 								<Mail style={{ width: '1.25rem', height: '1.25rem', color: '#a855f7', flexShrink: 0 }} />
-								<ContactText darkMode={darkMode}>miracles@example.com</ContactText>
+								<ContactText darkMode={darkMode}>ourMiracles@proton.me</ContactText>
 							</ContactItem>
 							<ContactItem>
 								<Phone style={{ width: '1.25rem', height: '1.25rem', color: '#a855f7', flexShrink: 0 }} />
-								<ContactText darkMode={darkMode}>050-1234567</ContactText>
+								<ContactText darkMode={darkMode}>052-4441093</ContactText>
 							</ContactItem>
 							<ContactItem>
 								<MapPin style={{ width: '1.25rem', height: '1.25rem', color: '#a855f7', flexShrink: 0 }} />
