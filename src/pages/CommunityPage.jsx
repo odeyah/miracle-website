@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { Heart, ChevronDown, Send, Award, Zap } from 'lucide-react';
+import { db } from '../firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 // ==================== STYLED COMPONENTS ====================
 
@@ -358,37 +360,56 @@ const CharCounter = styled.span`
 	margin-top: 0.25rem;
 `;
 
-// ==================== CUSTOM HOOKS ====================
+const FilterSection = styled.div`
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1rem;
+	margin-bottom: 2rem;
+`;
 
-const useLocalStorage = (key, initialValue) => {
-	const [storedValue, setStoredValue] = React.useState(() => {
-		try {
-			const item = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null;
-			return item ? JSON.parse(item) : initialValue;
-		} catch {
-			return initialValue;
-		}
-	});
+const FilterInput = styled.input`
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border-radius: 0.5rem;
+	border: 1px solid ${props => (props.darkMode ? '#4b5563' : '#d1d5db')};
+	background-color: ${props => (props.darkMode ? '#374151' : '#ffffff')};
+	color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
+	font-size: 1rem;
 
-	const setValue = value => {
-		try {
-			setStoredValue(value);
-			if (typeof window !== 'undefined') {
-				window.localStorage.setItem(key, JSON.stringify(value));
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	};
+	&::placeholder {
+		color: ${props => (props.darkMode ? '#9ca3af' : '#9ca3af')};
+	}
 
-	return [storedValue, setValue];
-};
+	&:focus {
+		outline: none;
+		border-color: #8b5cf6;
+		box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+	}
+`;
+
+const FilterSelectInput = styled.select`
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border-radius: 0.5rem;
+	border: 1px solid ${props => (props.darkMode ? '#4b5563' : '#d1d5db')};
+	background-color: ${props => (props.darkMode ? '#374151' : '#ffffff')};
+	color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
+	font-size: 1rem;
+
+	&:focus {
+		outline: none;
+		border-color: #8b5cf6;
+		box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+	}
+`;
 
 // ==================== MAIN COMPONENT ====================
 
 const CommunityPage = ({ darkMode }) => {
 	const [expandedMiracle, setExpandedMiracle] = useState(null);
-	const [communityMiracles, setCommunityMiracles] = useLocalStorage('community-miracles', [
+	const [searchQuery, setSearchQuery] = useState('');
+	const [selectedCategory, setSelectedCategory] = useState('all');
+	const [communityMiracles, setCommunityMiracles] = useState([
 		{
 			id: 1,
 			name: 'אודה-י-ה דוד אבלס',
@@ -409,7 +430,6 @@ const CommunityPage = ({ darkMode }) => {
 			icon: (
 				<img src='./income.png' alt='icon' width='32' height='32' style={{ verticalAlign: 'middle', borderRadius: '6px' }} />
 			),
-			likes: 23,
 			year: '2025',
 			approved: true,
 		},
@@ -421,27 +441,26 @@ const CommunityPage = ({ darkMode }) => {
 				<>
 					<p style={{ marginBottom: '0.5rem' }}>
 						'הייתי בשידוכים ארבע שנים ללא הצלחה. ואז החלטתי לנסוע לקבר רחל עם חברה, ושם קיבלתי על עצמי לא לדבר לשון הרע יום
-						אחד בשבוע. כעבור שלושה שבועות בלבד, שדכנית ותיקה התקשרה עם הצעה ואמרה “לא יודעת למה, אבל משהו בלב אמר לי להתקשר
-						דווקא היום”. היא נפגשה עם הבחור ואחרי חודשיים התארסו. השדכנית אמרה לי “לא הייתי מתקשרת אלייך, אבל באותו רגע היה
-						לי דחף לא מוסבר.”.',
+						אחד בשבוע. כעבור שלושה שבועות בלבד, שדכנית ותיקה התקשרה עם הצעה ואמרה "לא יודעת למה, אבל משהו בלב אמר לי להתקשר
+						דווקא היום". היא נפגשה עם הבחור ואחרי חודשיים התארסו. השדכנית אמרה לי "לא הייתי מתקשרת אלייך, אבל באותו רגע היה
+						לי דחף לא מוסבר.".',
 					</p>
 				</>
 			),
 			category: 'זיווג',
 			icon: '💑',
-			likes: 45,
 			year: '2022',
 			approved: true,
 		},
 		{
 			id: 3,
 			name: 'משפחת לוי',
-			title: 'הצ’ק שהגיע בזמן הכי מתאים',
+			title: 'הצק שהגיע בזמן הכי מתאים',
 			story: (
 				<>
 					<p style={{ marginBottom: '0.5rem' }}>
 						'משפחת לוי מבבית שמש נקלעה חודש אחד לחובות קשים בעקבות פיטורים פתאומיים של האב. באותו שבוע הם קיבלו התראה אחרונה
-						לפני ניתוק חשמל. האם סיפרה שנשברה ובכתה, ואז החליטה לתת צדקה קטנה למרות המצב הקשה. יומיים אחרי — הגיע בדואר צ’ק
+						לפני ניתוק חשמל. האם סיפרה שנשברה ובכתה, ואז החליטה לתת צדקה קטנה למרות המצב הקשה. יומיים אחרי — הגיע בדואר צ'ק
 						החזר מס הכנסה על סך 7,800 ש"ח. הבקשה להחזר הוגשה כמעט שנה קודם לכן — אבל מעולם לא קיבלו אישור או תשובה. הם ראו
 						בזה נס גם כי הסכום היה בדיוק לשקל מה שהיו חייבים לכיסוי חובות החשמל והמים.',
 					</p>
@@ -449,7 +468,6 @@ const CommunityPage = ({ darkMode }) => {
 			),
 			category: 'פרנסה',
 			icon: '💼',
-			likes: 34,
 			year: '2019',
 			approved: true,
 		},
@@ -478,7 +496,6 @@ const CommunityPage = ({ darkMode }) => {
 			),
 			category: 'רפואה',
 			icon: '🏥',
-			likes: 38,
 			year: '2020',
 			approved: true,
 		},
@@ -492,14 +509,13 @@ const CommunityPage = ({ darkMode }) => {
 						התינוק שלנו שהיה בן שנה וארבעה חודשים קיבל דלקת ריאות חמורה ונכנס למצוקה נשימתית קשה. בבית החולים כבר הכינו אותנו
 						ההורים לאפשרות של הנשמה ארוכה וסכנה ממשית. המשפחה ערכה "מי שברך לחולה" בבית הכנסת באותו ערב. ולמחרת — הרופאים
 						נדהמו: רמות ה־oxygen saturation שהיה 64% (רמה מסוכנת מאוד) עלה תוך לילה ל־94%. צילום הריאות הראה שהדלקת נעלמה
-						כמעט לחלוטין. הרופא הבכיר אמר להורים שזה "מה turnaround הכי מהירים שראה”. הבן שלנו שוחרר הביתה אחרי יומיים — בריא
+						כמעט לחלוטין. הרופא הבכיר אמר להורים שזה "מה turnaround הכי מהירים שראה". הבן שלנו שוחרר הביתה אחרי יומיים — בריא
 						לחלוטין.
 					</p>
 				</>
 			),
 			category: 'רפואה',
 			icon: '🏥',
-			likes: 38,
 			year: '2017',
 			approved: true,
 		},
@@ -515,7 +531,37 @@ const CommunityPage = ({ darkMode }) => {
 	});
 
 	const [submitted, setSubmitted] = useState(false);
-	const [likes, setLikes] = useLocalStorage('community-likes', {});
+	const [firebaseLikes, setFirebaseLikes] = useState({});
+
+	// טען את הלייקים מ-Firebase
+	useEffect(() => {
+		const loadLikes = async () => {
+			try {
+				const likesDoc = await getDoc(doc(db, 'community', 'likes'));
+				if (likesDoc.exists()) {
+					setFirebaseLikes(likesDoc.data());
+				}
+			} catch (error) {
+				console.error('Error loading likes:', error);
+			}
+		};
+		loadLikes();
+	}, []);
+
+	const filteredMiracles = useMemo(() => {
+		return communityMiracles
+			.filter(m => m.approved)
+			.filter(miracle => {
+				const matchesSearch =
+					searchQuery === '' ||
+					miracle.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+					miracle.name.toLowerCase().includes(searchQuery.toLowerCase());
+				const matchesCategory = selectedCategory === 'all' || miracle.category === selectedCategory;
+				return matchesSearch && matchesCategory;
+			});
+	}, [communityMiracles, searchQuery, selectedCategory]);
+
+	const categoryOptions = ['all', ...new Set(communityMiracles.map(m => m.category))];
 
 	const handleChange = e => {
 		const { name, value, type, checked } = e.target;
@@ -540,7 +586,6 @@ const CommunityPage = ({ darkMode }) => {
 			story: formData.story,
 			category: formData.category,
 			icon: '✨',
-			likes: 0,
 			year: new Date().getFullYear().toString(),
 			approved: false,
 		};
@@ -556,7 +601,7 @@ const CommunityPage = ({ darkMode }) => {
 			allowShare: true,
 		});
 
-		// Create email body for admin notification
+		// שלח אימייל
 		const emailBody = `
 בקשת הוספת נס חדש לקהילה:
 
@@ -581,15 +626,32 @@ ${formData.story}
 		setTimeout(() => setSubmitted(false), 3000);
 	};
 
-	const toggleLike = id => {
-		setLikes(prev => ({
-			...prev,
-			[id]: !prev[id],
-		}));
+	const toggleLike = async id => {
+		try {
+			const isLiked = firebaseLikes[id];
 
-		setCommunityMiracles(prev =>
-			prev.map(miracle => (miracle.id === id ? { ...miracle, likes: miracle.likes + (likes[id] ? -1 : 1) } : miracle)),
-		);
+			// עדכן ב-Firebase
+			await setDoc(
+				doc(db, 'community', 'likes'),
+				{
+					[id]: !isLiked,
+				},
+				{ merge: true },
+			);
+
+			// עדכן את state
+			setFirebaseLikes(prev => ({
+				...prev,
+				[id]: !isLiked,
+			}));
+
+			// עדכן את הניסים
+			setCommunityMiracles(prev =>
+				prev.map(miracle => (miracle.id === id ? { ...miracle, likes: miracle.likes + (isLiked ? -1 : 1) } : miracle)),
+			);
+		} catch (error) {
+			console.error('Error updating likes:', error);
+		}
 	};
 
 	const approvedMiracles = communityMiracles.filter(m => m.approved);
@@ -604,31 +666,51 @@ ${formData.story}
 		<PageSection>
 			<PageHeader>
 				<PageTitle>🎁 קהילת הניסים</PageTitle>
-				<PageSubtitle>שתפו את ניסיכם עם העולם</PageSubtitle>
-				<PageDescription>כאן כל אחד יכול לשתף את סיפור הנסים שלו. הניסים של אחרים הם השראה וחוזק לנו כולנו.</PageDescription>
+				<PageSubtitle>שתפו את הניסים שלכם עם העולם</PageSubtitle>
+				<PageDescription>
+					כאן כל אחד יכול לשתף את סיפור הנסים שלו. הניסים של אחרים הם השראה ומחזקים את כולנו.
+				</PageDescription>
 			</PageHeader>
 
 			{/* Stats */}
 			<StatsGrid>
 				<StatCard>
 					<StatValue>{stats.total}</StatValue>
-					<StatLabel>סיפורים מופרסמים</StatLabel>
+					<StatLabel>סיפורים מפורסמים</StatLabel>
 				</StatCard>
 				<StatCard>
 					<StatValue>{stats.submitted}</StatValue>
 					<StatLabel>בהמתנה לאישור</StatLabel>
 				</StatCard>
 				<StatCard>
-					<StatValue>{stats.totalLikes}</StatValue>
+					<StatValue>{Object.values(firebaseLikes).reduce((sum, likes) => sum + likes, 0)}</StatValue>
 					<StatLabel>סה"כ לייקים</StatLabel>
 				</StatCard>
 			</StatsGrid>
+
+			{/* Filters */}
+			<FilterSection>
+				<FilterInput
+					type='text'
+					placeholder='חפש סיפורים...'
+					value={searchQuery}
+					onChange={e => setSearchQuery(e.target.value)}
+					darkMode={darkMode}
+				/>
+				<FilterSelectInput value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} darkMode={darkMode}>
+					{categoryOptions.map(cat => (
+						<option key={cat} value={cat}>
+							{cat === 'all' ? 'כל הקטגוריות' : cat}
+						</option>
+					))}
+				</FilterSelectInput>
+			</FilterSection>
 
 			{/* Form and Stories */}
 			<TwoColumnLayout>
 				{/* Form Column */}
 				<FormColumn>
-					<FormTitle darkMode={darkMode}>שתוף את הנסים שלך</FormTitle>
+					<FormTitle darkMode={darkMode}>שתף את הנסים שלך</FormTitle>
 
 					{submitted && (
 						<SuccessMessage>
@@ -718,7 +800,7 @@ ${formData.story}
 						<FormGroup>
 							<CheckboxLabel darkMode={darkMode}>
 								<Checkbox type='checkbox' name='allowShare' checked={formData.allowShare} onChange={handleChange} />
-								אני מסכים ששיתוף זה יהיה פומבי לכל המטפלים
+								אני מסכים ששיתוף זה יהיה פומבי לכל הקהילה
 							</CheckboxLabel>
 						</FormGroup>
 
@@ -733,8 +815,8 @@ ${formData.story}
 				<StoriesColumn>
 					<FormTitle darkMode={darkMode}>סיפורי הקהילה</FormTitle>
 
-					{approvedMiracles.length > 0 ? (
-						approvedMiracles.map(miracle => (
+					{filteredMiracles.length > 0 ? (
+						filteredMiracles.map(miracle => (
 							<MiracleCard key={miracle.id} darkMode={darkMode}>
 								<MiracleCardHeader onClick={() => setExpandedMiracle(expandedMiracle === miracle.id ? null : miracle.id)}>
 									<MiracleIcon>{miracle.icon}</MiracleIcon>
@@ -759,11 +841,11 @@ ${formData.story}
 										>
 											<Heart
 												size={20}
-												fill={likes[miracle.id] ? '#ef4444' : 'none'}
-												color={likes[miracle.id] ? '#ef4444' : 'currentColor'}
+												fill={firebaseLikes[miracle.id] ? '#ef4444' : 'none'}
+												color={firebaseLikes[miracle.id] ? '#ef4444' : 'currentColor'}
 											/>
 										</IconButton>
-										<Stat darkMode={darkMode}>{miracle.likes}</Stat>
+										<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] || 0}</Stat>
 									</MiracleStats>
 									<ChevronIcon
 										size={24}
@@ -782,7 +864,7 @@ ${formData.story}
 					) : (
 						<EmptyState darkMode={darkMode}>
 							<div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📭</div>
-							<p>אין סיפורים מופרסמים עדיין. היה הראשון שמשתף!</p>
+							<p>אין סיפורים התואמים לחיפוש שלך</p>
 						</EmptyState>
 					)}
 				</StoriesColumn>

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
-import { Heart, Users, ChevronDown } from 'lucide-react';
+import { Heart, ChevronDown } from 'lucide-react';
 import { db } from '../firebase';
 import { doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 
@@ -303,15 +303,20 @@ const MyMiraclesPage = ({ darkMode }) => {
 
 	// טעון נתונים מ-Firebase בעת טעינה
 	useEffect(() => {
+		let isMounted = true;
+
 		const loadFirebaseData = async () => {
+			console.log('📡 Loading data from Firebase...');
 			const viewsData = {};
 			const likesData = {};
 
 			for (let i = 1; i <= 8; i++) {
 				try {
 					const docSnap = await getDoc(doc(db, 'miracles', i.toString()));
+					console.log(`Document ${i} exists:`, docSnap.exists());
 					if (docSnap.exists()) {
 						const data = docSnap.data();
+						console.log(`Document ${i} data:`, data);
 						viewsData[i] = data.views || 0;
 						likesData[i] = data.likes || 0;
 					}
@@ -320,11 +325,20 @@ const MyMiraclesPage = ({ darkMode }) => {
 				}
 			}
 
-			setFirebaseViews(viewsData);
-			setFirebaseLikes(likesData);
+			console.log('Final viewsData:', viewsData);
+			console.log('Final likesData:', likesData);
+
+			if (isMounted) {
+				setFirebaseViews(viewsData);
+				setFirebaseLikes(likesData);
+			}
 		};
 
 		loadFirebaseData();
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	// Your miracles data
@@ -513,14 +527,12 @@ const MyMiraclesPage = ({ darkMode }) => {
 	const handleExpandMiracle = async miracleId => {
 		setExpandedMiracle(expandedMiracle === miracleId ? null : miracleId);
 
-		// רק עדכן אם פותחים (לא סוגרים)
 		if (expandedMiracle !== miracleId) {
 			try {
 				await updateDoc(doc(db, 'miracles', miracleId.toString()), {
 					views: increment(1),
 				});
 
-				// עדכן state מקומי
 				setFirebaseViews(prev => ({
 					...prev,
 					[miracleId]: (prev[miracleId] || 0) + 1,
@@ -549,28 +561,61 @@ const MyMiraclesPage = ({ darkMode }) => {
 
 	// Toggle favorite
 	const toggleFavorite = async id => {
+		console.log('=== toggleFavorite START ===');
+		console.log('id:', id);
+		console.log('favorites before:', favorites);
+		console.log('firebaseLikes before:', firebaseLikes);
+
 		const isFavorited = favorites.includes(id);
-		const newFavorites = isFavorited ? favorites.filter(f => f !== id) : [...favorites, id];
-		setFavorites(newFavorites);
+		console.log('isFavorited:', isFavorited);
+
+		// עדכן localStorage מיד
+		setFavorites(prev => {
+			const newFavs = isFavorited ? prev.filter(f => f !== id) : [...prev, id];
+			console.log('setFavorites new value:', newFavs);
+			return newFavs;
+		});
+
+		// עדכן state מיד (optimistic update)
+		const incrementValue = isFavorited ? -1 : 1;
+		console.log('incrementValue:', incrementValue);
+
+		setFirebaseLikes(prev => {
+			const newLikes = {
+				...prev,
+				[id]: (prev[id] || 0) + incrementValue,
+			};
+			console.log('setFirebaseLikes new state:', newLikes);
+			return newLikes;
+		});
 
 		try {
-			await updateDoc(doc(db, 'miracles', id.toString()), {
-				likes: increment(isFavorited ? -1 : 1),
-			});
+			// עדכן Firebase
+			console.log('🟣 Sending to Firebase...');
+			console.log('Document path: miracles/' + id.toString());
+			console.log('Update data:', { likes: increment(incrementValue) });
 
+			await updateDoc(doc(db, 'miracles', id.toString()), {
+				likes: increment(incrementValue),
+			});
+			console.log('✅ Firebase updated successfully');
+		} catch (error) {
+			console.error('❌ Firebase error:', error);
+			console.error('Error code:', error.code);
+			console.error('Error message:', error.message);
+
+			// אם יש שגיאה, חזור את השינוי
 			setFirebaseLikes(prev => ({
 				...prev,
-				[id]: (prev[id] || 0) + (isFavorited ? -1 : 1),
+				[id]: (prev[id] || 0) - incrementValue,
 			}));
-		} catch (error) {
-			console.error('Error updating likes:', error);
 		}
+		console.log('=== toggleFavorite END ===');
 	};
 
 	// Get unique categories
 	const categoryOptions = ['all', ...new Set(myMiracles.map(m => m.category))];
 
-	// Calculate stats
 	// Calculate stats
 	const stats = useMemo(() => {
 		const totalViews = Object.values(firebaseViews).reduce((a, b) => a + b, 0);
@@ -646,10 +691,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 								</div>
 							</MiracleInfo>
 							<MiracleStats>
-								<Stat darkMode={darkMode}>
-									<Users size={16} />
-									{firebaseViews[miracle.id] || 0}
-								</Stat>
 								<IconButton
 									darkMode={darkMode}
 									onClick={e => {
@@ -663,6 +704,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 										color={favorites.includes(miracle.id) ? '#ec4899' : 'currentColor'}
 									/>
 								</IconButton>
+								<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] || 0}</Stat>
 							</MiracleStats>
 							<ChevronIcon
 								size={24}
