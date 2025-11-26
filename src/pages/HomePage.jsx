@@ -24,6 +24,12 @@ const HeroTitle = styled.h1`
 
 	@media (max-width: 768px) {
 		font-size: 2.25rem;
+		margin-bottom: 0.75rem;
+	}
+
+	@media (max-width: 640px) {
+		font-size: 1.75rem;
+		margin-bottom: 0.5rem;
 	}
 `;
 
@@ -31,6 +37,16 @@ const HeroSubtitle = styled.p`
 	font-size: 1.25rem;
 	margin-bottom: 2rem;
 	opacity: 0.95;
+
+	@media (max-width: 768px) {
+		font-size: 1rem;
+		margin-bottom: 1.5rem;
+	}
+
+	@media (max-width: 640px) {
+		font-size: 0.9rem;
+		margin-bottom: 1rem;
+	}
 `;
 
 const HeroButtons = styled.div`
@@ -38,6 +54,14 @@ const HeroButtons = styled.div`
 	gap: 1rem;
 	justify-content: center;
 	flex-wrap: wrap;
+
+	@media (max-width: 768px) {
+		gap: 0.75rem;
+	}
+
+	@media (max-width: 640px) {
+		gap: 0.5rem;
+	}
 `;
 
 const Button = styled.button`
@@ -51,11 +75,23 @@ const Button = styled.button`
 	color: ${props => (props.primary ? '#a855f7' : '#ffffff')};
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	gap: 0.5rem;
-
+	width: 160px;
+	height: 44px;
 	&:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+	}
+
+	@media (max-width: 768px) {
+		width: calc(50% - 0.5rem); //  2 כפתורים בשורה
+		height: 40px;
+		font-size: 0.8rem;
+
+		span {
+			display: none;
+		}
 	}
 `;
 
@@ -75,6 +111,10 @@ const FeaturesTitle = styled.h2`
 	text-align: center;
 	margin-bottom: 3rem;
 	color: ${props => (props.darkMode ? '#ffffff' : '#111827')};
+
+	@media (max-width: 768px) {
+		font-size: 2rem;
+	}
 `;
 
 const FeaturesGrid = styled.div`
@@ -127,7 +167,7 @@ const HomePage = ({ darkMode, onNavigate }) => {
 							הניסים של מרגלית
 						</Button>
 						<Button primary onClick={() => onNavigate('community')}>
-							קהילת הניסים שלנו
+							קהילת הניסים
 						</Button>
 						<Button primary onClick={() => onNavigate('lecture-booking')}>
 							הזמנת הרצאה
@@ -138,7 +178,7 @@ const HomePage = ({ darkMode, onNavigate }) => {
 
 			<FeaturesSection darkMode={darkMode}>
 				<FeaturesContainer>
-					<FeaturesTitle darkMode={darkMode}>מה אתם תוכלו למצוא כאן?</FeaturesTitle>
+					<FeaturesTitle darkMode={darkMode}>מה תוכלו למצוא כאן?</FeaturesTitle>
 					<FeaturesGrid>
 						<FeatureCard darkMode={darkMode}>
 							<FeatureIcon>📖</FeatureIcon>

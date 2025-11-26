@@ -102,19 +102,56 @@ const NavButton = styled.button`
 	border: ${props => (props.active ? '2px solid #a855f7' : 'none')};
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	gap: 0.5rem;
 	font-size: 0.95rem;
+	white-space: nowrap;
 
+	.desktop-text {
+		display: inline;
+	}
+
+	.tablet-text {
+		display: none;
+	}
+	.mobile-text {
+		display: none;
+	}
 	&:hover {
 		background-color: ${props =>
 			props.active ? 'linear-gradient(to right, #9333ea, #db2777)' : props.darkMode ? '#4b5563' : '#e5e7eb'};
 		transform: translateY(-2px);
 	}
+	@media (max-width: 932px) and (min-width: 768px) {
+		min-width: 90px;
+		padding: 0.5rem 0.75rem;
+		font-size: 0.85rem;
 
+		.desktop-text {
+			display: none !important;
+		}
+
+		.tablet-text {
+			display: inline !important;
+		}
+	}
 	@media (max-width: 768px) {
 		width: 100%;
 		justify-content: flex-start;
 		padding: 0.75rem 1rem;
+		.desktop-text {
+			display: none;
+		}
+
+		.tablet-text {
+			display: none;
+		}
+		.mobile-text {
+			display: inline;
+		}
+		span {
+			display: none;
+		}
 	}
 `;
 
@@ -200,6 +237,7 @@ const FooterSection = styled.div`
 	@media (max-width: 768px) {
 		width: 100%;
 		max-width: none;
+		align-items: center;
 	}
 `;
 
@@ -220,7 +258,9 @@ const FooterLink = styled.button`
 	cursor: pointer;
 	font-size: 0.875rem;
 	padding: 0;
-	text-align: left;
+	width: 100%;
+	max-width: none;
+	text-align: center;
 
 	&:hover {
 		color: #ffffff;
@@ -396,11 +436,11 @@ function App() {
 
 	// Page data for navigation
 	const pages = [
-		{ id: 'home', label: 'בית', icon: Home },
-		{ id: 'my-miracles', label: 'הניסים שלי', icon: BookOpen },
-		{ id: 'margalits-miracles', label: 'הניסים של מרגלית', icon: Heart },
-		{ id: 'community', label: 'קהילה', icon: Users, notifications: unreadNotifications },
-		{ id: 'lecture-booking', label: 'הזמן הרצאה', icon: Phone },
+		{ id: 'home', label: 'בית', labelTablet: 'בית', icon: Home },
+		{ id: 'my-miracles', label: 'הניסים שלי', labelTablet: 'אודה-י-ה', icon: BookOpen },
+		{ id: 'margalits-miracles', label: 'הניסים של מרגלית', labelTablet: 'מרגלית', icon: Heart },
+		{ id: 'community', label: 'קהילה', labelTablet: 'קהילה', icon: Users, notifications: unreadNotifications },
+		{ id: 'lecture-booking', label: 'הזמן הרצאה', labelTablet: 'הרצאה', icon: Phone },
 	];
 
 	// Breadcrumb data
@@ -439,7 +479,9 @@ function App() {
 										title={`עבור ל${page.label}`}
 									>
 										<Icon size={18} />
-										<span>{page.label}</span>
+										<span className='desktop-text'>{page.label}</span>
+										{page.labelTablet && <span className='tablet-text'>{page.labelTablet}</span>}
+										<span className='mobile-text'>{page.label}</span>
 									</NavButton>
 									{page.notifications > 0 && <NotificationBadge>{page.notifications}</NotificationBadge>}
 								</NavButtonWrapper>
