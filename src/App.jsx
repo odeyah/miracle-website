@@ -187,6 +187,7 @@ const FooterContainer = styled.div`
 	@media (max-width: 768px) {
 		flex-direction: column;
 		gap: 2rem;
+		align-items: center;
 	}
 `;
 
@@ -195,6 +196,11 @@ const FooterSection = styled.div`
 	flex: 1;
 	min-width: 200px;
 	max-width: 300px;
+
+	@media (max-width: 768px) {
+		width: 100%;
+		max-width: none;
+	}
 `;
 
 const FooterTitle = styled.h3`
