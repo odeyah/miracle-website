@@ -316,9 +316,9 @@ const IconButton = styled.button`
 `;
 
 const MiracleContent = styled.div`
-	padding: 1.5rem;
-	max-height: ${props => (props.expanded ? '100%' : '0')};
-	overflow: ${props => (props.expanded ? 'visible' : 'hidden')};
+	padding: 1rem;
+	max-height: ${props => (props.expanded ? '3000px' : '0')};
+	overflow: hidden;
 	transition: max-height 0.3s ease;
 	background-color: ${props => (props.darkMode ? '#111827' : '#f9fafb')};
 `;

@@ -163,7 +163,7 @@ const IconButton = styled.button`
 `;
 
 const MiracleContent = styled.div`
-	padding: 1.5rem;
+	padding: 1rem;
 	max-height: ${props => (props.expanded ? '100%' : '0')};
 	overflow: ${props => (props.expanded ? 'visible' : 'hidden')};
 	transition: max-height 0.3s ease;

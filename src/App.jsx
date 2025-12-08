@@ -20,6 +20,8 @@ const AppContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	overflow-x: hidden;
+	width: 100%;
 `;
 
 const Navbar = styled.nav`
@@ -199,6 +201,7 @@ const MainContent = styled.main`
 	width: 100%;
 	margin: 0 auto;
 	padding: 2rem 1rem;
+	box-sizing: border-box;
 
 	@media (max-width: 768px) {
 		padding: 1rem;
