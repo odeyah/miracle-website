@@ -160,11 +160,11 @@ const HomePage = ({ darkMode, onNavigate }) => {
 						ואור.
 					</HeroSubtitle>
 					<HeroButtons>
-						<Button primary onClick={() => onNavigate('my-miracles')}>
-							הניסים שלי
-						</Button>
 						<Button primary onClick={() => onNavigate('margalits-miracles')}>
 							הניסים של מרגלית
+						</Button>
+						<Button primary onClick={() => onNavigate('my-miracles')}>
+							הניסים שלי
 						</Button>
 						<Button primary onClick={() => onNavigate('community')}>
 							קהילת הניסים
