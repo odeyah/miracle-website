@@ -55,10 +55,18 @@ const TwoColumnLayout = styled.div`
 
 const FormColumn = styled.div`
 	flex: 1;
+
+	@media (max-width: 1024px) {
+		order: 2; // שיופיע אחרי הסיפורים בטאבלטים וניידים
+	}
 `;
 
 const StoriesColumn = styled.div`
 	flex: 1;
+
+	@media (max-width: 1024px) {
+		order: 1; // כדי שהניסים יופיעו לפני הטופס בטאבלטים וניידים
+	}
 `;
 
 const FormTitle = styled.h2`
@@ -118,11 +126,19 @@ const FormSelect = styled.select`
 	background-color: ${props => (props.darkMode ? '#374151' : '#ffffff')};
 	color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
 	font-size: 1rem;
+	position: relative;
+	z-index: 1000;
 
 	&:focus {
 		outline: none;
 		border-color: #8b5cf6;
 		box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+	}
+
+	option {
+		background-color: ${props => (props.darkMode ? '#374151' : '#ffffff')};
+		color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
+		padding: 0.75rem;
 	}
 `;
 
@@ -395,11 +411,17 @@ const FilterSelectInput = styled.select`
 	background-color: ${props => (props.darkMode ? '#374151' : '#ffffff')};
 	color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
 	font-size: 1rem;
+	text-align: center;
 
 	&:focus {
 		outline: none;
 		border-color: #8b5cf6;
 		box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+	}
+	option {
+		text-align: center;
+		background-color: ${props => (props.darkMode ? '#374151' : '#ffffff')};
+		color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
 	}
 `;
 
@@ -579,6 +601,11 @@ const CommunityPage = ({ darkMode }) => {
 			return;
 		}
 
+		if (formData.name.trim().length < 3) {
+			alert('שם חייב להכיל לפחות 3 אותיות');
+			return;
+		}
+
 		const newMiracle = {
 			id: Date.now(),
 			name: formData.name,
@@ -603,17 +630,14 @@ const CommunityPage = ({ darkMode }) => {
 
 		// שלח אימייל
 		const emailBody = `
-בקשת הוספת נס חדש לקהילה:
-
-שם: ${formData.name}
-דוא"ל: ${formData.email}
-קטגוריה: ${formData.category}
-כותרת: ${formData.title}
-
-סיפור:
-${formData.story}
-
-אישור שיתוף: ${formData.allowShare ? 'כן' : 'לא'}
+		בקשת הוספת נס חדש לקהילה:
+		שם: ${formData.name}
+		דוא"ל: ${formData.email}
+		קטגוריה: ${formData.category}
+		כותרת: ${formData.title}
+		סיפור:
+		${formData.story}
+		אישור שיתוף: ${formData.allowShare ? 'כן' : 'לא'}
 		`;
 
 		const subject = `נס חדש בהמתנה - ${formData.title}`;
@@ -621,45 +645,49 @@ ${formData.story}
 			emailBody,
 		)}`;
 
-		window.location.href = mailtoLink;
+		window.open(mailtoLink, '_blank');
 
 		setTimeout(() => setSubmitted(false), 3000);
 	};
 
+	// toggleLike function
 	const toggleLike = async id => {
+		let isLiked;
 		try {
 			const isLiked = firebaseLikes[id];
+			const newLikeValue = !isLiked;
+
+			// עדכן את state תחילה (optimistic update)
+			setFirebaseLikes(prev => ({
+				...prev,
+				[id]: newLikeValue,
+			}));
 
 			// עדכן ב-Firebase
 			await setDoc(
 				doc(db, 'community', 'likes'),
 				{
-					[id]: !isLiked,
+					[id]: newLikeValue,
 				},
 				{ merge: true },
 			);
-
-			// עדכן את state
-			setFirebaseLikes(prev => ({
-				...prev,
-				[id]: !isLiked,
-			}));
-
-			// עדכן את הניסים
-			setCommunityMiracles(prev =>
-				prev.map(miracle => (miracle.id === id ? { ...miracle, likes: miracle.likes + (isLiked ? -1 : 1) } : miracle)),
-			);
 		} catch (error) {
 			console.error('Error updating likes:', error);
+			// אם יש שגיאה, חזור למצב הקודם
+			setFirebaseLikes(prev => ({
+				...prev,
+				[id]: isLiked,
+			}));
 		}
 	};
 
 	const approvedMiracles = communityMiracles.filter(m => m.approved);
 
+	// stats - count true values in Firebase
 	const stats = {
 		total: approvedMiracles.length,
 		submitted: communityMiracles.filter(m => !m.approved).length,
-		totalLikes: approvedMiracles.reduce((sum, m) => sum + m.likes, 0),
+		totalLikes: Object.values(firebaseLikes).filter(Boolean).length,
 	};
 
 	return (
@@ -683,7 +711,7 @@ ${formData.story}
 					<StatLabel>בהמתנה לאישור</StatLabel>
 				</StatCard>
 				<StatCard>
-					<StatValue>{Object.values(firebaseLikes).reduce((sum, likes) => sum + likes, 0)}</StatValue>
+					<StatValue>{stats.totalLikes}</StatValue>
 					<StatLabel>סה"כ לייקים</StatLabel>
 				</StatCard>
 			</StatsGrid>
@@ -845,7 +873,7 @@ ${formData.story}
 												color={firebaseLikes[miracle.id] ? '#ef4444' : 'currentColor'}
 											/>
 										</IconButton>
-										<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] || 0}</Stat>
+										<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] ? 1 : 0}</Stat>
 									</MiracleStats>
 									<ChevronIcon
 										size={24}

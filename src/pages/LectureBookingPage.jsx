@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
@@ -40,13 +40,13 @@ const LectureOptions = styled.div`
 `;
 
 const LectureCard = styled.div`
-	background: rgba(255, 255, 255, 0.1);
+	background: ${props => (props.isSelected ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.1)')};
 	border-radius: 1rem;
 	padding: 2rem;
 	backdrop-filter: blur(10px);
 	transition: all 0.3s ease;
 	cursor: pointer;
-	border: 2px solid rgba(255, 255, 255, 0.2);
+	border: 2px solid ${props => (props.isSelected ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.2)')};
 
 	&:hover {
 		transform: translateY(-4px);
@@ -228,7 +228,15 @@ const ContactSpace = styled.div`
 	flex-direction: column;
 	gap: 0.75rem;
 `;
-
+const ErrorMessage = styled.div`
+	background-color: #ef4444;
+	color: white;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	margin-bottom: 1rem;
+	text-align: center;
+	font-weight: 600;
+`;
 const ContactItem = styled.div`
 	display: flex;
 	align-items: center;
@@ -240,6 +248,8 @@ const ContactText = styled.span`
 `;
 
 const LectureBookingPage = ({ darkMode }) => {
+	const formRef = useRef(null);
+
 	const [formData, setFormData] = useState({
 		name: '',
 		email: '',
@@ -252,6 +262,18 @@ const LectureBookingPage = ({ darkMode }) => {
 	});
 
 	const [submitted, setSubmitted] = useState(false);
+	const [errorMessage] = useState('');
+	const [phoneError, setPhoneError] = useState(false);
+
+	const handleCardClick = speakerValue => {
+		// Update the speaker in form data
+		setFormData(prev => ({ ...prev, speaker: speakerValue }));
+
+		// Scroll to the form section
+		if (formRef.current) {
+			formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
+	};
 
 	const handleChange = e => {
 		const { name, value } = e.target;
@@ -263,17 +285,20 @@ const LectureBookingPage = ({ darkMode }) => {
 
 		// Create email body
 		const emailBody = `
-שם המבקש: ${formData.name}
-דוא"ל: ${formData.email}
-טלפון: ${formData.phone}
-מוסר ההרצאה: ${formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד'}
-תאריך מבוקש: ${formData.date}
-מיקום: ${formData.location}
-מספר אורחים משוער: ${formData.guestCount}
-הערות נוספות:
-${formData.message}
+		שם המבקש: ${formData.name}
+		דוא"ל: ${formData.email}
+		טלפון: ${formData.phone}
+		מוסר ההרצאה: ${formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד'}
+		תאריך מבוקש: ${formData.date}
+		מיקום: ${formData.location}
+		מספר אורחים משוער: ${formData.guestCount}
+הערות נוספות: 		${formData.message}
 		`;
-
+		if (!validatePhoneNumber(formData.phone)) {
+			setPhoneError(true);
+			return;
+		}
+		setPhoneError(false);
 		// Create mailto link
 		const subject = `בקשת הרצאה - ${formData.name}`;
 		const mailtoLink = `mailto:ourMiracles@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
@@ -281,7 +306,7 @@ ${formData.message}
 		)}`;
 
 		// Open email client
-		window.location.href = mailtoLink;
+		window.open(mailtoLink, '_blank');
 
 		// Show success message
 		setSubmitted(true);
@@ -300,6 +325,20 @@ ${formData.message}
 		setTimeout(() => setSubmitted(false), 3000);
 	};
 
+	const handlePhoneChange = e => {
+		const { name, value } = e.target;
+		// Only allow numbers, +, and -
+		const filteredValue = value.replace(/[^0-9+-]/g, '');
+		setFormData(prev => ({ ...prev, [name]: filteredValue }));
+	};
+
+	const validatePhoneNumber = phone => {
+		// Extract only digits from the phone number
+		const digitsOnly = phone.replace(/[^0-9]/g, '');
+		// Check if there are at least 9 digits
+		return digitsOnly.length >= 9;
+	};
+
 	return (
 		<>
 			<LectureSection>
@@ -308,29 +347,42 @@ ${formData.message}
 					<LectureSubtitle>שתפו את סיפורי הניסים שלנו עם הקהילה שלכם</LectureSubtitle>
 
 					<LectureOptions>
-						<LectureCard>
+						<LectureCard onClick={() => handleCardClick('wife')} isSelected={formData.speaker === 'wife'}>
+							<LectureName>מרגלית</LectureName>
+							<LectureDescription>
+								<p>
+									"מזמור לתודה"
+									<br /> סיפור אישי בליווי שירים מקוריים
+									<br /> לנשים בלבד
+								</p>
+							</LectureDescription>
+						</LectureCard>
+
+						<LectureCard onClick={() => handleCardClick('both')} isSelected={formData.speaker === 'both'}>
+							<LectureName>יחד</LectureName>
+							<LectureDescription>
+								<p>
+									הניסים שלנו כזוג
+									<br /> בליווי שירים מקוריים של מרגלית
+									<br /> הרצאה משותפת <br /> לנשים בלבד
+								</p>
+							</LectureDescription>
+						</LectureCard>
+
+						<LectureCard onClick={() => handleCardClick('me')} isSelected={formData.speaker === 'me'}>
 							<LectureName>אודה-י-ה</LectureName>
 							<LectureDescription>סיפורי הניסים האישיים שלי</LectureDescription>
-						</LectureCard>
-
-						<LectureCard>
-							<LectureName>מרגלית</LectureName>
-							<LectureDescription>סיפורי הניסים של אשתי</LectureDescription>
-						</LectureCard>
-
-						<LectureCard>
-							<LectureName>יחד</LectureName>
-							<LectureDescription>הרצאה משותפת - הניסים שלנו כזוג</LectureDescription>
 						</LectureCard>
 					</LectureOptions>
 				</LectureContainer>
 			</LectureSection>
 
-			<FormSection darkMode={darkMode}>
+			<FormSection darkMode={darkMode} ref={formRef}>
 				<FormContainer>
 					<FormTitle darkMode={darkMode}>פרטי ההרצאה</FormTitle>
 
 					{submitted && <SuccessMessage>תודה! בקשתך נשלחה בהצלחה. נחזור אליך בהקדם!</SuccessMessage>}
+					{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
 					<FormBox darkMode={darkMode} onSubmit={handleSubmit}>
 						<FormGroup>
@@ -368,14 +420,23 @@ ${formData.message}
 									טלפון <Required>*</Required>
 								</FormLabel>
 								<FormInput
-									type='tel'
+									type='text'
 									name='phone'
 									placeholder='050-1234567'
 									value={formData.phone}
-									onChange={handleChange}
+									onChange={handlePhoneChange}
 									required
 									darkMode={darkMode}
+									style={{
+										borderColor: phoneError ? '#ef4444' : undefined,
+										boxShadow: phoneError ? '0 0 0 3px rgba(239, 68, 68, 0.1)' : undefined,
+									}}
 								/>
+								{phoneError && (
+									<div style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+										מספר הטלפון חייב להכיל לפחות 9 ספרות (מספרים, +, או -)
+									</div>
+								)}
 							</FormGroup>
 						</FormGroupGrid>
 
@@ -399,6 +460,7 @@ ${formData.message}
 									name='date'
 									value={formData.date}
 									onChange={handleChange}
+									min={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
 									required
 									darkMode={darkMode}
 								/>

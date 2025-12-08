@@ -210,6 +210,7 @@ const Footer = styled.footer`
 	color: white;
 	padding: 3rem 1rem;
 	margin-top: 4rem;
+	text-align: center;
 `;
 
 const FooterContainer = styled.div`
@@ -437,8 +438,8 @@ function App() {
 	// Page data for navigation
 	const pages = [
 		{ id: 'home', label: 'בית', labelTablet: 'בית', icon: Home },
-		{ id: 'my-miracles', label: 'הניסים שלי', labelTablet: 'אודה-י-ה', icon: BookOpen },
 		{ id: 'margalits-miracles', label: 'הניסים של מרגלית', labelTablet: 'מרגלית', icon: Heart },
+		{ id: 'my-miracles', label: 'הניסים שלי', labelTablet: 'אודה-י-ה', icon: BookOpen },
 		{ id: 'community', label: 'קהילה', labelTablet: 'קהילה', icon: Users, notifications: unreadNotifications },
 		{ id: 'lecture-booking', label: 'הזמן הרצאה', labelTablet: 'הרצאה', icon: Phone },
 	];
