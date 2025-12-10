@@ -280,49 +280,49 @@ const LectureBookingPage = ({ darkMode }) => {
 		setFormData(prev => ({ ...prev, [name]: value }));
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
 
-		// Create email body
-		const emailBody = `
-		שם המבקש: ${formData.name}
-		דוא"ל: ${formData.email}
-		טלפון: ${formData.phone}
-		מוסר ההרצאה: ${formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד'}
-		תאריך מבוקש: ${formData.date}
-		מיקום: ${formData.location}
-		מספר אורחים משוער: ${formData.guestCount}
-הערות נוספות: 		${formData.message}
-		`;
 		if (!validatePhoneNumber(formData.phone)) {
 			setPhoneError(true);
 			return;
 		}
 		setPhoneError(false);
-		// Create mailto link
-		const subject = `בקשת הרצאה - ${formData.name}`;
-		const mailtoLink = `mailto:ourMiracles@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-			emailBody,
-		)}`;
 
-		// Open email client
-		window.open(mailtoLink, '_blank');
+		try {
+			const response = await fetch('/api/sendLecture', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name: formData.name,
+					email: formData.email,
+					phone: formData.phone,
+					speaker: formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד',
+					date: formData.date,
+					location: formData.location,
+					guestCount: formData.guestCount,
+					message: formData.message,
+				}),
+			});
 
-		// Show success message
-		setSubmitted(true);
-		setFormData({
-			name: '',
-			email: '',
-			phone: '',
-			date: '',
-			speaker: 'both',
-			location: '',
-			guestCount: '',
-			message: '',
-		});
-
-		// Reset success message after 3 seconds
-		setTimeout(() => setSubmitted(false), 3000);
+			if (response.ok) {
+				setSubmitted(true);
+				setFormData({
+					name: '',
+					email: '',
+					phone: '',
+					date: '',
+					speaker: 'both',
+					location: '',
+					guestCount: '',
+					message: '',
+				});
+				setTimeout(() => setSubmitted(false), 3000);
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			alert('שגיאה בשליחת הבקשה');
+		}
 	};
 
 	const handlePhoneChange = e => {

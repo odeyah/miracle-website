@@ -593,7 +593,7 @@ const CommunityPage = ({ darkMode }) => {
 		}));
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
 
 		if (!formData.name || !formData.email || !formData.title || !formData.story) {
@@ -606,48 +606,51 @@ const CommunityPage = ({ darkMode }) => {
 			return;
 		}
 
-		const newMiracle = {
-			id: Date.now(),
-			name: formData.name,
-			title: formData.title,
-			story: formData.story,
-			category: formData.category,
-			icon: '✨',
-			year: new Date().getFullYear().toString(),
-			approved: false,
-		};
+		try {
+			const response = await fetch('/api/sendCommunity', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name: formData.name,
+					email: formData.email,
+					category: formData.category,
+					title: formData.title,
+					story: formData.story,
+					allowShare: formData.allowShare,
+				}),
+			});
 
-		setCommunityMiracles([newMiracle, ...communityMiracles]);
-		setSubmitted(true);
-		setFormData({
-			name: '',
-			email: '',
-			category: 'אחר',
-			title: '',
-			story: '',
-			allowShare: true,
-		});
+			if (response.ok) {
+				const newMiracle = {
+					id: Date.now(),
+					name: formData.name,
+					title: formData.title,
+					story: formData.story,
+					category: formData.category,
+					icon: '✨',
+					year: new Date().getFullYear().toString(),
+					approved: false,
+				};
 
-		// שלח אימייל
-		const emailBody = `
-		בקשת הוספת נס חדש לקהילה:
-		שם: ${formData.name}
-		דוא"ל: ${formData.email}
-		קטגוריה: ${formData.category}
-		כותרת: ${formData.title}
-		סיפור:
-		${formData.story}
-		אישור שיתוף: ${formData.allowShare ? 'כן' : 'לא'}
-		`;
+				setCommunityMiracles([newMiracle, ...communityMiracles]);
+				setSubmitted(true);
+				setFormData({
+					name: '',
+					email: '',
+					category: 'אחר',
+					title: '',
+					story: '',
+					allowShare: true,
+				});
 
-		const subject = `נס חדש בהמתנה - ${formData.title}`;
-		const mailtoLink = `mailto:ourMiracles@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-			emailBody,
-		)}`;
-
-		window.open(mailtoLink, '_blank');
-
-		setTimeout(() => setSubmitted(false), 3000);
+				setTimeout(() => setSubmitted(false), 3000);
+			} else {
+				alert('שגיאה בשליחת הסיפור');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			alert('שגיאה בשליחת הסיפור');
+		}
 	};
 
 	// toggleLike function
