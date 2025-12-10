@@ -399,7 +399,13 @@ const useLocalStorage = (key, initialValue) => {
 // ==================== MAIN APP COMPONENT ====================
 
 function App() {
-	const [activePage, setActivePage] = useState('home');
+	const [activePage, setActivePage] = useState(() => {
+		const path = window.location.pathname;
+		// If path is '/' or empty, return 'home'
+		if (path === '/' || path === '') return 'home';
+		// Otherwise remove the leading '/' and return
+		return path.replace('/', '');
+	});
 	const [darkMode, setDarkMode] = useLocalStorage('darkMode', false);
 	const [mobileMenu, setMobileMenu] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -409,7 +415,8 @@ function App() {
 	const navigatePage = page => {
 		setLoading(true);
 		setMobileMenu(false);
-		window.history.pushState({ page }, '', `/${page}`);
+		const path = page === 'home' ? '/' : `/${page}`;
+		window.history.pushState({ page }, '', path);
 		setTimeout(() => {
 			setActivePage(page);
 			setLoading(false);
