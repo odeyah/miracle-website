@@ -562,7 +562,7 @@ function App() {
 							<br />
 							טלפון: 052-4441093
 							<br />
-							ירושלים, ישראל
+							בית שמש, ישראל
 						</FooterText>
 					</FooterSection>
 				</FooterContainer>
