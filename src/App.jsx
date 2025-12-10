@@ -6,6 +6,7 @@ import MyMiraclesPage from './pages/MyMiraclesPage';
 import MargalitsPage from './pages/MargalitsPage';
 import CommunityPage from './pages/CommunityPage';
 import LectureBookingPage from './pages/LectureBookingPage';
+import { useEffect } from 'react';
 
 // ==================== STYLED COMPONENTS ====================
 
@@ -408,6 +409,7 @@ function App() {
 	const navigatePage = page => {
 		setLoading(true);
 		setMobileMenu(false);
+		window.history.pushState({ page }, '', `/${page}`);
 		setTimeout(() => {
 			setActivePage(page);
 			setLoading(false);
@@ -419,6 +421,18 @@ function App() {
 	const handleCommunitySubmission = () => {
 		setUnreadNotifications(prev => prev + 1);
 	};
+
+	// Add browser history support
+	useEffect(() => {
+		const handlePopState = event => {
+			if (event.state && event.state.page) {
+				setActivePage(event.state.page);
+			}
+		};
+
+		window.addEventListener('popstate', handlePopState);
+		return () => window.removeEventListener('popstate', handlePopState);
+	}, []);
 
 	// Render current page
 	const renderPage = () => {
