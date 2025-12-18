@@ -82,7 +82,18 @@ const MiracleCardHeader = styled.div`
 	padding: 1.5rem;
 	background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
 	cursor: pointer;
-	gap: 3rem;
+	gap: 1rem;
+	flex-wrap: wrap;
+
+	@media (max-width: 768px) {
+		gap: 0.75rem;
+		padding: 1rem;
+	}
+
+	@media (max-width: 480px) {
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
 `;
 
 const MiracleIcon = styled.span`
@@ -102,6 +113,16 @@ const MiracleIcon = styled.span`
 const MiracleInfo = styled.div`
 	flex: 1;
 	margin-left: 2rem;
+	min-width: 0;
+
+	@media (max-width: 768px) {
+		margin-left: 1rem;
+	}
+
+	@media (max-width: 480px) {
+		margin-left: 0;
+		width: 100%;
+	}
 `;
 
 const MiracleYear = styled.span`
@@ -119,6 +140,16 @@ const MiracleTitle = styled.h3`
 	font-weight: 700;
 	margin-bottom: 0.25rem;
 	color: ${props => (props.darkMode ? '#ffffff' : '#111827')};
+	word-break: break-word;
+	overflow-wrap: break-word;
+
+	@media (max-width: 768px) {
+		font-size: 1.1rem;
+	}
+
+	@media (max-width: 480px) {
+		font-size: 1rem;
+	}
 `;
 
 const MiracleCategory = styled.span`
@@ -133,9 +164,20 @@ const MiracleCategory = styled.span`
 
 const MiracleStats = styled.div`
 	display: flex;
-	gap: 1.5rem;
+	gap: 1rem;
 	align-items: center;
-	justify-content: flex-end;
+	flex-wrap: wrap;
+
+	@media (max-width: 768px) {
+		gap: 0.5rem;
+		font-size: 0.75rem;
+	}
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+	}
 `;
 
 const Stat = styled.div`
@@ -144,6 +186,17 @@ const Stat = styled.div`
 	gap: 0.25rem;
 	color: ${props => (props.darkMode ? '#9ca3af' : '#6b7280')};
 	font-size: 0.875rem;
+`;
+
+const IconGroup = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+		gap: 0.25rem;
+	}
 `;
 
 const IconButton = styled.button`
@@ -158,7 +211,7 @@ const IconButton = styled.button`
 	transition: color 0.3s ease;
 
 	&:hover {
-		color: #ec4899;
+		color: #8b5cf6;
 	}
 `;
 
@@ -398,7 +451,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 					</>
 				),
 				category: 'משפחה',
-				icon: '💑💖',
+				icon: 'multi',
 				favorite: false,
 			},
 			{
@@ -675,7 +728,12 @@ const MyMiraclesPage = ({ darkMode }) => {
 					<MiracleCard key={miracle.id} darkMode={darkMode}>
 						<MiracleCardHeader onClick={() => handleExpandMiracle(miracle.id)}>
 							<MiracleIcon>
-								{miracle.icon.endsWith('.ico') || miracle.icon.endsWith('.png') || miracle.icon.endsWith('.jpg') ? (
+								{miracle.icon === 'multi' ? (
+									<IconGroup>
+										<span>💑</span>
+										<span>💖</span>
+									</IconGroup>
+								) : miracle.icon.endsWith('.ico') || miracle.icon.endsWith('.png') || miracle.icon.endsWith('.jpg') ? (
 									<img src={miracle.icon} alt='icon' />
 								) : (
 									miracle.icon
@@ -691,20 +749,22 @@ const MyMiraclesPage = ({ darkMode }) => {
 								</div>
 							</MiracleInfo>
 							<MiracleStats>
-								<IconButton
-									darkMode={darkMode}
-									onClick={e => {
-										e.stopPropagation();
-										toggleFavorite(miracle.id);
-									}}
-								>
-									<Heart
-										size={20}
-										fill={favorites.includes(miracle.id) ? '#ec4899' : 'none'}
-										color={favorites.includes(miracle.id) ? '#ec4899' : 'currentColor'}
-									/>
-								</IconButton>
-								<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] || 0}</Stat>
+								<div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+									<IconButton
+										darkMode={darkMode}
+										onClick={e => {
+											e.stopPropagation();
+											toggleFavorite(miracle.id);
+										}}
+									>
+										<Heart
+											size={20}
+											fill={favorites.includes(miracle.id) ? '#ec4899' : 'none'}
+											color={favorites.includes(miracle.id) ? '#ec4899' : 'currentColor'}
+										/>
+									</IconButton>
+									<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] || 0}</Stat>
+								</div>
 							</MiracleStats>
 							<ChevronIcon
 								size={24}

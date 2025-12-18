@@ -133,21 +133,21 @@ const FormInput = styled.input`
 	}
 `;
 
-const FormSelect = styled.select`
-	width: 100%;
-	padding: 0.75rem 1rem;
-	border-radius: 0.5rem;
-	border: 1px solid ${props => (props.darkMode ? '#4b5563' : '#d1d5db')};
-	background-color: ${props => (props.darkMode ? '#374151' : '#ffffff')};
-	color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
-	font-size: 1rem;
+// const FormSelect = styled.select`
+// 	width: 100%;
+// 	padding: 0.75rem 1rem;
+// 	border-radius: 0.5rem;
+// 	border: 1px solid ${props => (props.darkMode ? '#4b5563' : '#d1d5db')};
+// 	background-color: ${props => (props.darkMode ? '#374151' : '#ffffff')};
+// 	color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
+// 	font-size: 1rem;
 
-	&:focus {
-		outline: none;
-		border-color: #a855f7;
-		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
-	}
-`;
+// 	&:focus {
+// 		outline: none;
+// 		border-color: #a855f7;
+// 		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+// 	}
+// `;
 
 const FormTextarea = styled.textarea`
 	width: 100%;
@@ -297,7 +297,8 @@ const LectureBookingPage = ({ darkMode }) => {
 					name: formData.name,
 					email: formData.email,
 					phone: formData.phone,
-					speaker: formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד',
+					speaker: formData.speaker,
+					// speaker: formData.speaker === 'me' ? 'אודה-י-ה' : formData.speaker === 'wife' ? 'מרגלית' : 'שנינו יחד',
 					date: formData.date,
 					location: formData.location,
 					guestCount: formData.guestCount,
@@ -344,10 +345,11 @@ const LectureBookingPage = ({ darkMode }) => {
 			<LectureSection>
 				<LectureContainer>
 					<LectureTitle>הזמנת הרצאה</LectureTitle>
-					<LectureSubtitle>שתפו את סיפורי הניסים שלנו עם הקהילה שלכם</LectureSubtitle>
+					<LectureSubtitle>שתפו את סיפורי הניסים שלי עם הקהילה שלכם</LectureSubtitle>
+					{/* שלנו */}
 
 					<LectureOptions>
-						<LectureCard onClick={() => handleCardClick('wife')} isSelected={formData.speaker === 'wife'}>
+						{/* <LectureCard onClick={() => handleCardClick('wife')} isSelected={formData.speaker === 'wife'}>
 							<LectureName>מרגלית</LectureName>
 							<LectureDescription>
 								<p>
@@ -367,7 +369,7 @@ const LectureBookingPage = ({ darkMode }) => {
 									<br /> הרצאה משותפת <br /> לנשים בלבד
 								</p>
 							</LectureDescription>
-						</LectureCard>
+						</LectureCard> */}
 
 						<LectureCard onClick={() => handleCardClick('me')} isSelected={formData.speaker === 'me'}>
 							<LectureName>אודה-י-ה</LectureName>
@@ -441,16 +443,16 @@ const LectureBookingPage = ({ darkMode }) => {
 						</FormGroupGrid>
 
 						<FormGroupGrid>
-							<FormGroup>
+							{/* <FormGroup>
 								<FormLabel darkMode={darkMode}>
 									בחר מוסר ההרצאה <Required>*</Required>
 								</FormLabel>
 								<FormSelect name='speaker' value={formData.speaker} onChange={handleChange} darkMode={darkMode}>
 									<option value='both'>שנינו יחד</option>
 									<option value='me'>אודה-י-ה</option>
-									<option value='wife'>מרגלית</option>
+									<option value='wife'>מרגלית</option> 
 								</FormSelect>
-							</FormGroup>
+							</FormGroup> */}
 							<FormGroup>
 								<FormLabel darkMode={darkMode}>
 									תאריך מבוקש <Required>*</Required>

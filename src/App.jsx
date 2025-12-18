@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Heart, Moon, Sun, Menu, X, Sparkles, Home, BookOpen, Users, Phone } from 'lucide-react';
+import { Moon, Sun, Menu, X, Sparkles, Home, BookOpen, Users, Phone } from 'lucide-react'; // Heart,
 import HomePage from './pages/HomePage';
 import MyMiraclesPage from './pages/MyMiraclesPage';
 import MargalitsPage from './pages/MargalitsPage';
@@ -462,7 +462,7 @@ function App() {
 	// Page data for navigation
 	const pages = [
 		{ id: 'home', label: 'בית', labelTablet: 'בית', icon: Home },
-		{ id: 'margalits-miracles', label: 'הניסים של מרגלית', labelTablet: 'מרגלית', icon: Heart },
+		// { id: 'margalits-miracles', label: 'הניסים של מרגלית', labelTablet: 'מרגלית', icon: Heart },
 		{ id: 'my-miracles', label: 'הניסים שלי', labelTablet: 'אודה-י-ה', icon: BookOpen },
 		{ id: 'community', label: 'קהילה', labelTablet: 'קהילה', icon: Users, notifications: unreadNotifications },
 		{ id: 'lecture-booking', label: 'הזמן הרצאה', labelTablet: 'הרצאה', icon: Phone },
@@ -570,7 +570,7 @@ function App() {
 					<FooterSection>
 						<FooterTitle>קישורים</FooterTitle>
 						<FooterLink onClick={() => navigatePage('my-miracles')}>הניסים שלי</FooterLink>
-						<FooterLink onClick={() => navigatePage('margalits-miracles')}>הניסים של מרגלית</FooterLink>
+						{/* <FooterLink onClick={() => navigatePage('margalits-miracles')}>הניסים של מרגלית</FooterLink> */}
 						<FooterLink onClick={() => navigatePage('community')}>קהילה</FooterLink>
 						<FooterLink onClick={() => navigatePage('lecture-booking')}>הזמן הרצאה</FooterLink>
 					</FooterSection>

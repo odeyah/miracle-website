@@ -155,14 +155,14 @@ const HomePage = ({ darkMode, onNavigate }) => {
 				<HeroContent>
 					<HeroTitle>השם איתנו, הניסים לא נגמרים</HeroTitle>
 					<HeroSubtitle>
-						ברוכים הבאים למקום של אמונה, תודה וניסים. כאן תמצאו את סיפורי הניסים האישיים שלי ושל מרגלית, וגם את ניסי הקהילה –
-						סיפורים אמיתיים של אנשים שראו את יד ה׳ בחייהם. המטרה שלנו היא להזכיר לכולנו שה׳ תמיד איתנו, ותמיד יש תקווה, אמונה
-						ואור.
+						{/* של מרגלית */}
+						ברוכים הבאים למקום של אמונה, תודה וניסים. כאן תמצאו את סיפורי הניסים האישיים שלי וניסי הקהילה – סיפורים אמיתיים
+						של אנשים שראו את יד ה׳ בחייהם. המטרה שלנו היא להזכיר לכולנו שה׳ תמיד איתנו, ותמיד יש תקווה, אמונה ואור.
 					</HeroSubtitle>
 					<HeroButtons>
-						<Button primary onClick={() => onNavigate('margalits-miracles')}>
+						{/* <Button primary onClick={() => onNavigate('margalits-miracles')}>
 							הניסים של מרגלית
-						</Button>
+						</Button> */}
 						<Button primary onClick={() => onNavigate('my-miracles')}>
 							הניסים שלי
 						</Button>
@@ -183,9 +183,7 @@ const HomePage = ({ darkMode, onNavigate }) => {
 						<FeatureCard darkMode={darkMode}>
 							<FeatureIcon>📖</FeatureIcon>
 							<FeatureTitle darkMode={darkMode}>סיפורי ניסים</FeatureTitle>
-							<FeatureDescription darkMode={darkMode}>
-								קרא את סיפורי הניסים המופלאים שקרו לנו בשנים האחרונות
-							</FeatureDescription>
+							<FeatureDescription darkMode={darkMode}>קרא את סיפור החיים הניסיים והמופלאים שלי</FeatureDescription>
 						</FeatureCard>
 						<FeatureCard darkMode={darkMode}>
 							<FeatureIcon>👥</FeatureIcon>
