@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const LectureSection = styled.section`
 	background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
@@ -342,6 +343,12 @@ const LectureBookingPage = ({ darkMode }) => {
 
 	return (
 		<>
+			<SEO
+				title='הזמנת הרצאה'
+				description='הזמינו הרצאה מרגשת על סיפורי ניסים אמיתיים. הרצאות לקהילות, בתי כנסת, אירועים ועוד.'
+				keywords='הזמנת הרצאה, הרצאות ניסים, הרצאות אמונה, אירועים'
+				url='/lecture-booking'
+			/>
 			<LectureSection>
 				<LectureContainer>
 					<LectureTitle>הזמנת הרצאה</LectureTitle>

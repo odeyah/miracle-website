@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import SEO from '../components/SEO';
 
 const HeroSection = styled.section`
 	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
@@ -85,7 +86,7 @@ const Button = styled.button`
 	}
 
 	@media (max-width: 768px) {
-		width: calc(50% - 0.5rem); //  2 כפתורים בשורה
+		width: calc(50% - 0.5rem);
 		height: 40px;
 		font-size: 0.8rem;
 
@@ -123,7 +124,7 @@ const FeaturesGrid = styled.div`
 	gap: 2rem;
 `;
 
-const FeatureCard = styled.div`
+const FeatureCard = styled.article`
 	background-color: ${props => (props.darkMode ? '#111827' : '#ffffff')};
 	border-radius: 1rem;
 	padding: 2rem;
@@ -151,18 +152,21 @@ const FeatureDescription = styled.p`
 const HomePage = ({ darkMode, onNavigate }) => {
 	return (
 		<>
+			<SEO
+				title='דף הבית'
+				description='ברוכים הבאים למסע הניסים שלנו - מקום של אמונה, תודה וניסים. כאן תמצאו סיפורי ניסים אמיתיים של אנשים שראו את יד ה׳ בחייהם.'
+				keywords='ניסים, אמונה, סיפורי ניסים, ישועה, תפילה, יהדות, השגחה פרטית, מסע הניסים'
+				url='/'
+			/>
+
 			<HeroSection>
 				<HeroContent>
 					<HeroTitle>השם איתנו, הניסים לא נגמרים</HeroTitle>
 					<HeroSubtitle>
-						{/* של מרגלית */}
 						ברוכים הבאים למקום של אמונה, תודה וניסים. כאן תמצאו את סיפורי הניסים האישיים שלי וניסי הקהילה – סיפורים אמיתיים
 						של אנשים שראו את יד ה׳ בחייהם. המטרה שלנו היא להזכיר לכולנו שה׳ תמיד איתנו, ותמיד יש תקווה, אמונה ואור.
 					</HeroSubtitle>
 					<HeroButtons>
-						{/* <Button primary onClick={() => onNavigate('margalits-miracles')}>
-							הניסים של מרגלית
-						</Button> */}
 						<Button primary onClick={() => onNavigate('my-miracles')}>
 							הניסים שלי
 						</Button>
@@ -181,17 +185,23 @@ const HomePage = ({ darkMode, onNavigate }) => {
 					<FeaturesTitle darkMode={darkMode}>מה תוכלו למצוא כאן?</FeaturesTitle>
 					<FeaturesGrid>
 						<FeatureCard darkMode={darkMode}>
-							<FeatureIcon>📖</FeatureIcon>
+							<FeatureIcon role='img' aria-label='ספר'>
+								📖
+							</FeatureIcon>
 							<FeatureTitle darkMode={darkMode}>סיפורי ניסים</FeatureTitle>
 							<FeatureDescription darkMode={darkMode}>קרא את סיפור החיים הניסיים והמופלאים שלי</FeatureDescription>
 						</FeatureCard>
 						<FeatureCard darkMode={darkMode}>
-							<FeatureIcon>👥</FeatureIcon>
+							<FeatureIcon role='img' aria-label='קהילה'>
+								👥
+							</FeatureIcon>
 							<FeatureTitle darkMode={darkMode}>קהילה</FeatureTitle>
 							<FeatureDescription darkMode={darkMode}>שתפו את הניסים שלכם עם הקהילה שלנו וחזקו זה את זה</FeatureDescription>
 						</FeatureCard>
 						<FeatureCard darkMode={darkMode}>
-							<FeatureIcon>🎤</FeatureIcon>
+							<FeatureIcon role='img' aria-label='מיקרופון'>
+								🎤
+							</FeatureIcon>
 							<FeatureTitle darkMode={darkMode}>הרצאות</FeatureTitle>
 							<FeatureDescription darkMode={darkMode}>הזמינו הרצאה אצלכם עם סיפורי הניסים שלנו</FeatureDescription>
 						</FeatureCard>

@@ -1,0 +1,10 @@
+# robots.txt for מסע הניסים שלנו
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://our-miracles.vercel.app/sitemap.xml
+
+# Disallow admin or private paths (add if needed)
+# Disallow: /admin/
+# Disallow: /api/

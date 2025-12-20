@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Heart, ChevronDown, Send, Award, Zap } from 'lucide-react';
 import { db } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
+import SEO from '../components/SEO';
 
 // ==================== STYLED COMPONENTS ====================
 
@@ -554,6 +555,7 @@ const CommunityPage = ({ darkMode }) => {
 
 	const [submitted, setSubmitted] = useState(false);
 	const [firebaseLikes, setFirebaseLikes] = useState({});
+	const [error, setError] = useState(null);
 
 	// טען את הלייקים מ-Firebase
 	useEffect(() => {
@@ -564,7 +566,7 @@ const CommunityPage = ({ darkMode }) => {
 					setFirebaseLikes(likesDoc.data());
 				}
 			} catch (error) {
-				console.error('Error loading likes:', error);
+				setError('שגיאה בטעינת הנתונים.');
 			}
 		};
 		loadLikes();
@@ -648,8 +650,7 @@ const CommunityPage = ({ darkMode }) => {
 				alert('שגיאה בשליחת הסיפור');
 			}
 		} catch (error) {
-			console.error('Error:', error);
-			alert('שגיאה בשליחת הסיפור');
+			setError('שגיאה בשליחת הסיפור. נסה שוב.');
 		}
 	};
 
@@ -675,8 +676,7 @@ const CommunityPage = ({ darkMode }) => {
 				{ merge: true },
 			);
 		} catch (error) {
-			console.error('Error updating likes:', error);
-			// אם יש שגיאה, חזור למצב הקודם
+			setError('שגיאה בעדכון הלייק.');
 			setFirebaseLikes(prev => ({
 				...prev,
 				[id]: isLiked,
@@ -695,6 +695,38 @@ const CommunityPage = ({ darkMode }) => {
 
 	return (
 		<PageSection>
+			<SEO
+				title='קהילת הניסים'
+				description='שתפו את סיפורי הניסים שלכם עם הקהילה. קראו סיפורי ניסים מרגשים של אנשים מכל הארץ.'
+				keywords='קהילת ניסים, שיתוף סיפורים, סיפורי ניסים, עדויות אמונה'
+				url='/community'
+			/>
+			{error && (
+				<div
+					style={{
+						backgroundColor: '#fee2e2',
+						color: '#dc2626',
+						padding: '1rem',
+						borderRadius: '0.5rem',
+						marginBottom: '1rem',
+						textAlign: 'center',
+					}}
+				>
+					{error}
+					<button
+						onClick={() => setError(null)}
+						style={{
+							marginRight: '1rem',
+							background: 'none',
+							border: 'none',
+							cursor: 'pointer',
+							fontWeight: 'bold',
+						}}
+					>
+						✕
+					</button>
+				</div>
+			)}
 			<PageHeader>
 				<PageTitle>🎁 קהילת הניסים</PageTitle>
 				<PageSubtitle>שתפו את הניסים שלכם עם העולם</PageSubtitle>

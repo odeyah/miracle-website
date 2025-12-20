@@ -2,7 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { Heart, ChevronDown } from 'lucide-react';
 import { db } from '../firebase';
-import { doc, updateDoc, increment, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, increment, getDocs, collection } from 'firebase/firestore';
+import SEO from '../components/SEO';
 
 // ==================== STYLED COMPONENTS ====================
 
@@ -61,7 +62,7 @@ const SelectInput = styled.select`
 	}
 `;
 
-const MiracleCard = styled.div`
+const MiracleCard = styled.article`
 	background-color: ${props => (props.darkMode ? '#1f2937' : '#ffffff')};
 	border-radius: 0.75rem;
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -135,7 +136,7 @@ const MiracleYear = styled.span`
 	margin-bottom: 0.5rem;
 `;
 
-const MiracleTitle = styled.h3`
+const MiracleTitle = styled.h2`
 	font-size: 1.25rem;
 	font-weight: 700;
 	margin-bottom: 0.25rem;
@@ -280,6 +281,7 @@ const ChevronIcon = styled(ChevronDown)`
 	transition: transform 0.3s ease;
 	transform: ${props => (props.expanded ? 'rotate(180deg)' : 'rotate(0deg)')};
 `;
+
 const PsalmSection = styled.section`
 	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
 	color: white;
@@ -304,6 +306,7 @@ const PsalmText = styled.p`
 	max-width: 600px;
 	margin: 0 auto;
 `;
+
 // ==================== CUSTOM HOOKS ====================
 
 const useLocalStorage = (key, initialValue) => {
@@ -351,44 +354,35 @@ const MyMiraclesPage = ({ darkMode }) => {
 	const [favorites, setFavorites] = useLocalStorage('my-miracles-favorites', []);
 	const [firebaseViews, setFirebaseViews] = useState({});
 	const [firebaseLikes, setFirebaseLikes] = useState({});
+	const [error, setError] = useState(null);
 
 	const debouncedSearch = useDebounce(searchQuery, 300);
 
 	// טעון נתונים מ-Firebase בעת טעינה
 	useEffect(() => {
 		let isMounted = true;
-
 		const loadFirebaseData = async () => {
-			console.log('📡 Loading data from Firebase...');
-			const viewsData = {};
-			const likesData = {};
-
-			for (let i = 1; i <= 8; i++) {
-				try {
-					const docSnap = await getDoc(doc(db, 'miracles', i.toString()));
-					console.log(`Document ${i} exists:`, docSnap.exists());
-					if (docSnap.exists()) {
-						const data = docSnap.data();
-						console.log(`Document ${i} data:`, data);
-						viewsData[i] = data.views || 0;
-						likesData[i] = data.likes || 0;
-					}
-				} catch (error) {
-					console.error(`Error loading miracle ${i}:`, error);
+			try {
+				const querySnapshot = await getDocs(collection(db, 'miracles'));
+				const viewsData = {};
+				const likesData = {};
+				querySnapshot.forEach(doc => {
+					const data = doc.data();
+					const id = parseInt(doc.id);
+					viewsData[id] = data.views || 0;
+					likesData[id] = data.likes || 0;
+				});
+				if (isMounted) {
+					setFirebaseViews(viewsData);
+					setFirebaseLikes(likesData);
+				}
+			} catch (error) {
+				if (isMounted) {
+					setError('שגיאה בטעינת הנתונים. נסה לרענן את הדף.');
 				}
 			}
-
-			console.log('Final viewsData:', viewsData);
-			console.log('Final likesData:', likesData);
-
-			if (isMounted) {
-				setFirebaseViews(viewsData);
-				setFirebaseLikes(likesData);
-			}
 		};
-
 		loadFirebaseData();
-
 		return () => {
 			isMounted = false;
 		};
@@ -576,6 +570,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 		],
 		[],
 	);
+
 	// עדכון צפיות כשמרחיבים נס
 	const handleExpandMiracle = async miracleId => {
 		setExpandedMiracle(expandedMiracle === miracleId ? null : miracleId);
@@ -591,10 +586,11 @@ const MyMiraclesPage = ({ darkMode }) => {
 					[miracleId]: (prev[miracleId] || 0) + 1,
 				}));
 			} catch (error) {
-				console.error('Error updating views:', error);
+				setError('שגיאה בעדכון הצפיות.');
 			}
 		}
 	};
+
 	// Filter and search miracles
 	const filteredMiracles = useMemo(() => {
 		return myMiracles.filter(miracle => {
@@ -614,56 +610,34 @@ const MyMiraclesPage = ({ darkMode }) => {
 
 	// Toggle favorite
 	const toggleFavorite = async id => {
-		console.log('=== toggleFavorite START ===');
-		console.log('id:', id);
-		console.log('favorites before:', favorites);
-		console.log('firebaseLikes before:', firebaseLikes);
-
 		const isFavorited = favorites.includes(id);
-		console.log('isFavorited:', isFavorited);
 
 		// עדכן localStorage מיד
 		setFavorites(prev => {
 			const newFavs = isFavorited ? prev.filter(f => f !== id) : [...prev, id];
-			console.log('setFavorites new value:', newFavs);
 			return newFavs;
 		});
 
 		// עדכן state מיד (optimistic update)
 		const incrementValue = isFavorited ? -1 : 1;
-		console.log('incrementValue:', incrementValue);
 
-		setFirebaseLikes(prev => {
-			const newLikes = {
-				...prev,
-				[id]: (prev[id] || 0) + incrementValue,
-			};
-			console.log('setFirebaseLikes new state:', newLikes);
-			return newLikes;
-		});
+		setFirebaseLikes(prev => ({
+			...prev,
+			[id]: (prev[id] || 0) + incrementValue,
+		}));
 
 		try {
-			// עדכן Firebase
-			console.log('🟣 Sending to Firebase...');
-			console.log('Document path: miracles/' + id.toString());
-			console.log('Update data:', { likes: increment(incrementValue) });
-
 			await updateDoc(doc(db, 'miracles', id.toString()), {
 				likes: increment(incrementValue),
 			});
-			console.log('✅ Firebase updated successfully');
 		} catch (error) {
-			console.error('❌ Firebase error:', error);
-			console.error('Error code:', error.code);
-			console.error('Error message:', error.message);
-
-			// אם יש שגיאה, חזור את השינוי
+			setError('שגיאה בעדכון הלייק.');
+			// השאר את ה-rollback שכבר קיים
 			setFirebaseLikes(prev => ({
 				...prev,
 				[id]: (prev[id] || 0) - incrementValue,
 			}));
 		}
-		console.log('=== toggleFavorite END ===');
 	};
 
 	// Get unique categories
@@ -682,6 +656,39 @@ const MyMiraclesPage = ({ darkMode }) => {
 
 	return (
 		<PageSection>
+			<SEO
+				title='הניסים שלי'
+				description='סיפורי הניסים האישיים של אודה-י-ה דוד אבלס - מהלידה ועד היום. סיפורים של אמונה, תקווה והשגחה פרטית.'
+				keywords='ניסים אישיים, סיפורי ניסים, אודה-י-ה, השגחה פרטית, אמונה, ישועה'
+				url='/my-miracles'
+				type='article'
+			/>
+			{error && (
+				<div
+					style={{
+						backgroundColor: '#fee2e2',
+						color: '#dc2626',
+						padding: '1rem',
+						borderRadius: '0.5rem',
+						marginBottom: '1rem',
+						textAlign: 'center',
+					}}
+				>
+					{error}
+					<button
+						onClick={() => setError(null)}
+						style={{
+							marginRight: '1rem',
+							background: 'none',
+							border: 'none',
+							cursor: 'pointer',
+							fontWeight: 'bold',
+						}}
+					>
+						✕
+					</button>
+				</div>
+			)}
 			<PageTitle darkMode={darkMode}>הניסים שלי - אודה-י-ה דוד אבלס</PageTitle>
 
 			{/* Stats */}
@@ -708,15 +715,21 @@ const MyMiraclesPage = ({ darkMode }) => {
 					value={searchQuery}
 					onChange={e => setSearchQuery(e.target.value)}
 					darkMode={darkMode}
+					aria-label='חיפוש ניסים'
 				/>
-				<SelectInput value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} darkMode={darkMode}>
+				<SelectInput
+					value={selectedCategory}
+					onChange={e => setSelectedCategory(e.target.value)}
+					darkMode={darkMode}
+					aria-label='סינון לפי קטגוריה'
+				>
 					{categoryOptions.map(cat => (
 						<option key={cat} value={cat}>
 							{cat === 'all' ? 'כל הקטגוריות' : cat}
 						</option>
 					))}
 				</SelectInput>
-				<SelectInput value={sortBy} onChange={e => setSortBy(e.target.value)} darkMode={darkMode}>
+				<SelectInput value={sortBy} onChange={e => setSortBy(e.target.value)} darkMode={darkMode} aria-label='מיון תוצאות'>
 					<option value='date'>מהחדש ביותר</option>
 					<option value='views'>לפי צפיות</option>
 				</SelectInput>
@@ -726,17 +739,29 @@ const MyMiraclesPage = ({ darkMode }) => {
 			{sortedMiracles.length > 0 ? (
 				sortedMiracles.map(miracle => (
 					<MiracleCard key={miracle.id} darkMode={darkMode}>
-						<MiracleCardHeader onClick={() => handleExpandMiracle(miracle.id)}>
+						<MiracleCardHeader
+							onClick={() => handleExpandMiracle(miracle.id)}
+							aria-expanded={expandedMiracle === miracle.id}
+							role='button'
+							tabIndex={0}
+							onKeyDown={e => e.key === 'Enter' && handleExpandMiracle(miracle.id)}
+						>
 							<MiracleIcon>
 								{miracle.icon === 'multi' ? (
 									<IconGroup>
-										<span>💑</span>
-										<span>💖</span>
+										<span role='img' aria-label='זוג'>
+											💑
+										</span>
+										<span role='img' aria-label='לב'>
+											💖
+										</span>
 									</IconGroup>
 								) : miracle.icon.endsWith('.ico') || miracle.icon.endsWith('.png') || miracle.icon.endsWith('.jpg') ? (
-									<img src={miracle.icon} alt='icon' />
+									<img src={miracle.icon} alt={miracle.title} />
 								) : (
-									miracle.icon
+									<span role='img' aria-label={miracle.category}>
+										{miracle.icon}
+									</span>
 								)}
 							</MiracleIcon>
 							<MiracleInfo>
@@ -756,6 +781,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 											e.stopPropagation();
 											toggleFavorite(miracle.id);
 										}}
+										aria-label={favorites.includes(miracle.id) ? 'הסר מהמועדפים' : 'הוסף למועדפים'}
 									>
 										<Heart
 											size={20}
@@ -773,6 +799,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 									marginLeft: '1rem',
 									color: darkMode ? '#e5e7eb' : '#374151',
 								}}
+								aria-hidden='true'
 							/>
 						</MiracleCardHeader>
 						<MiracleContent expanded={expandedMiracle === miracle.id}>
@@ -782,10 +809,13 @@ const MyMiraclesPage = ({ darkMode }) => {
 				))
 			) : (
 				<EmptyState darkMode={darkMode}>
-					<EmptyIcon>🔍</EmptyIcon>
+					<EmptyIcon role='img' aria-label='חיפוש'>
+						🔍
+					</EmptyIcon>
 					<p>לא נמצאו ניסים התואמים לחיפוש שלך</p>
 				</EmptyState>
 			)}
+
 			<PsalmSection>
 				<PsalmTitle>🙏 מזמור לתודה - מזמור ק בתהילים</PsalmTitle>
 				<PsalmText>
@@ -798,4 +828,5 @@ const MyMiraclesPage = ({ darkMode }) => {
 		</PageSection>
 	);
 };
+
 export default MyMiraclesPage;
