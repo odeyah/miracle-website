@@ -1,6 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
 import SEO from '../components/SEO';
+import { motion } from 'framer-motion';
+
+// Animation variants
+const fadeInUp = {
+	hidden: { opacity: 0, y: 30 },
+	visible: { opacity: 1, y: 0 },
+};
+
+const staggerContainer = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.2,
+		},
+	},
+};
+
+const scaleIn = {
+	hidden: { opacity: 0, scale: 0.8 },
+	visible: {
+		opacity: 1,
+		scale: 1,
+		transition: { duration: 0.5 },
+	},
+};
 
 const HeroSection = styled.section`
 	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
@@ -160,51 +186,91 @@ const HomePage = ({ darkMode, onNavigate }) => {
 			/>
 
 			<HeroSection>
-				<HeroContent>
-					<HeroTitle>השם איתנו, הניסים לא נגמרים</HeroTitle>
-					<HeroSubtitle>
-						ברוכים הבאים למקום של אמונה, תודה וניסים. כאן תמצאו את סיפורי הניסים האישיים שלי וניסי הקהילה – סיפורים אמיתיים
-						של אנשים שראו את יד ה׳ בחייהם. המטרה שלנו היא להזכיר לכולנו שה׳ תמיד איתנו, ותמיד יש תקווה, אמונה ואור.
-					</HeroSubtitle>
-					<HeroButtons>
-						<Button primary onClick={() => onNavigate('my-miracles')}>
-							הניסים שלי
-						</Button>
-						<Button primary onClick={() => onNavigate('community')}>
-							קהילת הניסים
-						</Button>
-						<Button primary onClick={() => onNavigate('lecture-booking')}>
-							הזמנת הרצאה
-						</Button>
-					</HeroButtons>
+				<HeroContent as={motion.div} initial='hidden' animate='visible' variants={staggerContainer}>
+					<motion.div variants={fadeInUp}>
+						<HeroTitle>השם איתנו, הניסים לא נגמרים</HeroTitle>
+					</motion.div>
+					<motion.div variants={fadeInUp}>
+						<HeroSubtitle>
+							ברוכים הבאים למקום של אמונה, תודה וניסים. כאן תמצאו את סיפורי הניסים האישיים שלי וניסי הקהילה – סיפורים אמיתיים
+							של אנשים שראו את יד ה׳ בחייהם. המטרה שלנו היא להזכיר לכולנו שה׳ תמיד איתנו, ותמיד יש תקווה, אמונה ואור.
+						</HeroSubtitle>
+					</motion.div>
+					<motion.div variants={fadeInUp}>
+						<HeroButtons>
+							<Button
+								as={motion.button}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								primary
+								onClick={() => onNavigate('my-miracles')}
+							>
+								הניסים שלי
+							</Button>
+							<Button
+								as={motion.button}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								primary
+								onClick={() => onNavigate('community')}
+							>
+								קהילת הניסים
+							</Button>
+							<Button
+								as={motion.button}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								primary
+								onClick={() => onNavigate('lecture-booking')}
+							>
+								הזמנת הרצאה
+							</Button>
+						</HeroButtons>
+					</motion.div>
 				</HeroContent>
 			</HeroSection>
 
 			<FeaturesSection darkMode={darkMode}>
 				<FeaturesContainer>
 					<FeaturesTitle darkMode={darkMode}>מה תוכלו למצוא כאן?</FeaturesTitle>
-					<FeaturesGrid>
-						<FeatureCard darkMode={darkMode}>
-							<FeatureIcon role='img' aria-label='ספר'>
-								📖
-							</FeatureIcon>
-							<FeatureTitle darkMode={darkMode}>סיפורי ניסים</FeatureTitle>
-							<FeatureDescription darkMode={darkMode}>קרא את סיפור החיים הניסיים והמופלאים שלי</FeatureDescription>
-						</FeatureCard>
-						<FeatureCard darkMode={darkMode}>
-							<FeatureIcon role='img' aria-label='קהילה'>
-								👥
-							</FeatureIcon>
-							<FeatureTitle darkMode={darkMode}>קהילה</FeatureTitle>
-							<FeatureDescription darkMode={darkMode}>שתפו את הניסים שלכם עם הקהילה שלנו וחזקו זה את זה</FeatureDescription>
-						</FeatureCard>
-						<FeatureCard darkMode={darkMode}>
-							<FeatureIcon role='img' aria-label='מיקרופון'>
-								🎤
-							</FeatureIcon>
-							<FeatureTitle darkMode={darkMode}>הרצאות</FeatureTitle>
-							<FeatureDescription darkMode={darkMode}>הזמינו הרצאה אצלכם עם סיפורי הניסים שלנו</FeatureDescription>
-						</FeatureCard>
+					<FeaturesGrid
+						as={motion.div}
+						initial='hidden'
+						whileInView='visible'
+						viewport={{ once: true, amount: 0.3 }}
+						variants={staggerContainer}
+					>
+						<motion.div variants={scaleIn}>
+							<FeatureCard darkMode={darkMode}>
+								<FeatureIcon role='img' aria-label='ספר'>
+									📖
+								</FeatureIcon>
+								<FeatureTitle darkMode={darkMode}>סיפורי ניסים</FeatureTitle>
+								<FeatureDescription darkMode={darkMode}>קרא את סיפור החיים הניסיים והמופלאים שלי</FeatureDescription>
+							</FeatureCard>
+						</motion.div>
+
+						<motion.div variants={scaleIn}>
+							<FeatureCard darkMode={darkMode}>
+								<FeatureIcon role='img' aria-label='קהילה'>
+									👥
+								</FeatureIcon>
+								<FeatureTitle darkMode={darkMode}>קהילה</FeatureTitle>
+								<FeatureDescription darkMode={darkMode}>
+									שתפו את הניסים שלכם עם הקהילה שלנו וחזקו זה את זה
+								</FeatureDescription>
+							</FeatureCard>
+						</motion.div>
+
+						<motion.div variants={scaleIn}>
+							<FeatureCard darkMode={darkMode}>
+								<FeatureIcon role='img' aria-label='מיקרופון'>
+									🎤
+								</FeatureIcon>
+								<FeatureTitle darkMode={darkMode}>הרצאות</FeatureTitle>
+								<FeatureDescription darkMode={darkMode}>הזמינו הרצאה אצלכם עם סיפורי הניסים שלנו</FeatureDescription>
+							</FeatureCard>
+						</motion.div>
 					</FeaturesGrid>
 				</FeaturesContainer>
 			</FeaturesSection>

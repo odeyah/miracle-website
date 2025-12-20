@@ -4,7 +4,42 @@ import { Heart, ChevronDown } from 'lucide-react';
 import { db } from '../firebase';
 import { doc, updateDoc, increment, getDocs, collection } from 'firebase/firestore';
 import SEO from '../components/SEO';
+import { motion, AnimatePresence } from 'framer-motion';
 
+// Animation variants
+const cardVariants = {
+	hidden: { opacity: 0, y: 20 },
+	visible: {
+		opacity: 1,
+		y: 0,
+		transition: { duration: 0.4 },
+	},
+	exit: { opacity: 0, y: -20 },
+};
+
+const staggerContainer = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.1,
+		},
+	},
+};
+
+const expandContent = {
+	hidden: { opacity: 0, height: 0 },
+	visible: {
+		opacity: 1,
+		height: 'auto',
+		transition: { duration: 0.3 },
+	},
+	exit: {
+		opacity: 0,
+		height: 0,
+		transition: { duration: 0.2 },
+	},
+};
 // ==================== STYLED COMPONENTS ====================
 
 const PageSection = styled.section`
@@ -393,7 +428,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 		() => [
 			{
 				id: 1,
-				year: '2026',
+				year: new Date(new Date().setMonth(new Date().getMonth() + 6)).getFullYear().toString(),
 				title: 'הנס העתידי שאני ומרגלית מחכים לו כל יום',
 				story: (
 					<>
@@ -409,7 +444,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 			},
 			{
 				id: 2,
-				year: '2025',
+				year: new Date().getFullYear().toString(),
 				title: 'הנס העתידי שכולנו מחכים לו כל יום',
 				story: (
 					<>
@@ -737,76 +772,86 @@ const MyMiraclesPage = ({ darkMode }) => {
 
 			{/* Miracles List */}
 			{sortedMiracles.length > 0 ? (
-				sortedMiracles.map(miracle => (
-					<MiracleCard key={miracle.id} darkMode={darkMode}>
-						<MiracleCardHeader
-							onClick={() => handleExpandMiracle(miracle.id)}
-							aria-expanded={expandedMiracle === miracle.id}
-							role='button'
-							tabIndex={0}
-							onKeyDown={e => e.key === 'Enter' && handleExpandMiracle(miracle.id)}
-						>
-							<MiracleIcon>
-								{miracle.icon === 'multi' ? (
-									<IconGroup>
-										<span role='img' aria-label='זוג'>
-											💑
-										</span>
-										<span role='img' aria-label='לב'>
-											💖
-										</span>
-									</IconGroup>
-								) : miracle.icon.endsWith('.ico') || miracle.icon.endsWith('.png') || miracle.icon.endsWith('.jpg') ? (
-									<img src={miracle.icon} alt={miracle.title} />
-								) : (
-									<span role='img' aria-label={miracle.category}>
-										{miracle.icon}
-									</span>
-								)}
-							</MiracleIcon>
-							<MiracleInfo>
-								<div>
-									<MiracleYear>{miracle.year}</MiracleYear>
-								</div>
-								<MiracleTitle darkMode={darkMode}>{miracle.title}</MiracleTitle>
-								<div style={{ marginTop: '0.25rem' }}>
-									<MiracleCategory darkMode={darkMode}>{miracle.category}</MiracleCategory>
-								</div>
-							</MiracleInfo>
-							<MiracleStats>
-								<div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-									<IconButton
-										darkMode={darkMode}
-										onClick={e => {
-											e.stopPropagation();
-											toggleFavorite(miracle.id);
+				<motion.div initial='hidden' animate='visible' variants={staggerContainer}>
+					{sortedMiracles.map(miracle => (
+						<motion.div key={miracle.id} variants={cardVariants}>
+							<MiracleCard as={motion.div} whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }} darkMode={darkMode}>
+								<MiracleCardHeader
+									onClick={() => handleExpandMiracle(miracle.id)}
+									aria-expanded={expandedMiracle === miracle.id}
+									role='button'
+									tabIndex={0}
+									onKeyDown={e => e.key === 'Enter' && handleExpandMiracle(miracle.id)}
+								>
+									<MiracleIcon>
+										{miracle.icon === 'multi' ? (
+											<IconGroup>
+												<span role='img' aria-label='זוג'>
+													💑
+												</span>
+												<span role='img' aria-label='לב'>
+													💖
+												</span>
+											</IconGroup>
+										) : miracle.icon.endsWith('.ico') || miracle.icon.endsWith('.png') || miracle.icon.endsWith('.jpg') ? (
+											<img src={miracle.icon} alt={miracle.title} />
+										) : (
+											<span role='img' aria-label={miracle.category}>
+												{miracle.icon}
+											</span>
+										)}
+									</MiracleIcon>
+									<MiracleInfo>
+										<div>
+											<MiracleYear>{miracle.year}</MiracleYear>
+										</div>
+										<MiracleTitle darkMode={darkMode}>{miracle.title}</MiracleTitle>
+										<div style={{ marginTop: '0.25rem' }}>
+											<MiracleCategory darkMode={darkMode}>{miracle.category}</MiracleCategory>
+										</div>
+									</MiracleInfo>
+									<MiracleStats>
+										<div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+											<IconButton
+												darkMode={darkMode}
+												onClick={e => {
+													e.stopPropagation();
+													toggleFavorite(miracle.id);
+												}}
+												aria-label={favorites.includes(miracle.id) ? 'הסר מהמועדפים' : 'הוסף למועדפים'}
+											>
+												<Heart
+													size={20}
+													fill={favorites.includes(miracle.id) ? '#ec4899' : 'none'}
+													color={favorites.includes(miracle.id) ? '#ec4899' : 'currentColor'}
+												/>
+											</IconButton>
+											<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] || 0}</Stat>
+										</div>
+									</MiracleStats>
+									<ChevronIcon
+										size={24}
+										expanded={expandedMiracle === miracle.id}
+										style={{
+											marginLeft: '1rem',
+											color: darkMode ? '#e5e7eb' : '#374151',
 										}}
-										aria-label={favorites.includes(miracle.id) ? 'הסר מהמועדפים' : 'הוסף למועדפים'}
-									>
-										<Heart
-											size={20}
-											fill={favorites.includes(miracle.id) ? '#ec4899' : 'none'}
-											color={favorites.includes(miracle.id) ? '#ec4899' : 'currentColor'}
-										/>
-									</IconButton>
-									<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] || 0}</Stat>
-								</div>
-							</MiracleStats>
-							<ChevronIcon
-								size={24}
-								expanded={expandedMiracle === miracle.id}
-								style={{
-									marginLeft: '1rem',
-									color: darkMode ? '#e5e7eb' : '#374151',
-								}}
-								aria-hidden='true'
-							/>
-						</MiracleCardHeader>
-						<MiracleContent expanded={expandedMiracle === miracle.id}>
-							<MiracleStory darkMode={darkMode}>{miracle.story}</MiracleStory>
-						</MiracleContent>
-					</MiracleCard>
-				))
+										aria-hidden='true'
+									/>
+								</MiracleCardHeader>
+								<AnimatePresence>
+									{expandedMiracle === miracle.id && (
+										<motion.div initial='hidden' animate='visible' exit='exit' variants={expandContent}>
+											<MiracleContent expanded={true}>
+												<MiracleStory darkMode={darkMode}>{miracle.story}</MiracleStory>
+											</MiracleContent>
+										</motion.div>
+									)}
+								</AnimatePresence>
+							</MiracleCard>
+						</motion.div>
+					))}
+				</motion.div>
 			) : (
 				<EmptyState darkMode={darkMode}>
 					<EmptyIcon role='img' aria-label='חיפוש'>
