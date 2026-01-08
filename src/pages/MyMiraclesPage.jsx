@@ -5,6 +5,9 @@ import { db } from '../firebase';
 import { doc, updateDoc, increment, getDocs, collection } from 'firebase/firestore';
 import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
+import SkeletonCard from '../components/SkeletonCard';
+import ShareButtons from '../components/ShareButtons';
+import BookmarkButton from '../components/BookmarkButton';
 
 // Animation variants
 const cardVariants = {
@@ -390,7 +393,8 @@ const MyMiraclesPage = ({ darkMode }) => {
 	const [firebaseViews, setFirebaseViews] = useState({});
 	const [firebaseLikes, setFirebaseLikes] = useState({});
 	const [error, setError] = useState(null);
-
+	const [loading, setLoading] = useState(true);
+	const [bookmarks, setBookmarks] = useLocalStorage('my-miracles-bookmarks', []);
 	const debouncedSearch = useDebounce(searchQuery, 300);
 
 	// טעון נתונים מ-Firebase בעת טעינה
@@ -415,13 +419,17 @@ const MyMiraclesPage = ({ darkMode }) => {
 				if (isMounted) {
 					setError('שגיאה בטעינת הנתונים. נסה לרענן את הדף.');
 				}
+			} finally {
+				if (isMounted) {
+					setLoading(false);
+				}
 			}
 		};
 		loadFirebaseData();
 		return () => {
 			isMounted = false;
 		};
-	}, []);
+	});
 
 	// Your miracles data
 	const myMiracles = useMemo(
@@ -674,7 +682,9 @@ const MyMiraclesPage = ({ darkMode }) => {
 			}));
 		}
 	};
-
+	const toggleBookmark = id => {
+		setBookmarks(prev => (prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]));
+	};
 	// Get unique categories
 	const categoryOptions = ['all', ...new Set(myMiracles.map(m => m.category))];
 
@@ -725,7 +735,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 				</div>
 			)}
 			<PageTitle darkMode={darkMode}>הניסים שלי - אודה-י-ה דוד אבלס</PageTitle>
-
 			{/* Stats */}
 			<StatsGrid>
 				<StatCard darkMode={darkMode}>
@@ -741,7 +750,6 @@ const MyMiraclesPage = ({ darkMode }) => {
 					<StatLabel darkMode={darkMode}>סה"כ צפיות</StatLabel>
 				</StatCard>
 			</StatsGrid>
-
 			{/* Filters */}
 			<FilterSection>
 				<FilterInput
@@ -769,9 +777,14 @@ const MyMiraclesPage = ({ darkMode }) => {
 					<option value='views'>לפי צפיות</option>
 				</SelectInput>
 			</FilterSection>
-
 			{/* Miracles List */}
-			{sortedMiracles.length > 0 ? (
+			{loading ? (
+				<>
+					<SkeletonCard darkMode={darkMode} />
+					<SkeletonCard darkMode={darkMode} />
+					<SkeletonCard darkMode={darkMode} />
+				</>
+			) : sortedMiracles.length > 0 ? (
 				<motion.div initial='hidden' animate='visible' variants={staggerContainer}>
 					{sortedMiracles.map(miracle => (
 						<motion.div key={miracle.id} variants={cardVariants}>
@@ -825,6 +838,14 @@ const MyMiraclesPage = ({ darkMode }) => {
 													fill={favorites.includes(miracle.id) ? '#ec4899' : 'none'}
 													color={favorites.includes(miracle.id) ? '#ec4899' : 'currentColor'}
 												/>
+												<BookmarkButton
+													isBookmarked={bookmarks.includes(miracle.id)}
+													onClick={e => {
+														e.stopPropagation();
+														toggleBookmark(miracle.id);
+													}}
+													darkMode={darkMode}
+												/>
 											</IconButton>
 											<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] || 0}</Stat>
 										</div>
@@ -844,6 +865,11 @@ const MyMiraclesPage = ({ darkMode }) => {
 										<motion.div initial='hidden' animate='visible' exit='exit' variants={expandContent}>
 											<MiracleContent expanded={true}>
 												<MiracleStory darkMode={darkMode}>{miracle.story}</MiracleStory>
+												<ShareButtons
+													title={miracle.title}
+													url={`${window.location.origin}/my-miracles#${miracle.id}`}
+													darkMode={darkMode}
+												/>
 											</MiracleContent>
 										</motion.div>
 									)}
@@ -860,7 +886,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 					<p>לא נמצאו ניסים התואמים לחיפוש שלך</p>
 				</EmptyState>
 			)}
-
+			,{/* Psalm Section */}
 			<PsalmSection>
 				<PsalmTitle>🙏 מזמור לתודה - מזמור ק בתהילים</PsalmTitle>
 				<PsalmText>

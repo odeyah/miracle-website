@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import styled from 'styled-components';
-import { Moon, Sun, Menu, X, Sparkles, Home, BookOpen, Users, Phone } from 'lucide-react'; // Heart,
-import HomePage from './pages/HomePage';
-import MyMiraclesPage from './pages/MyMiraclesPage';
-import MargalitsPage from './pages/MargalitsPage';
-import CommunityPage from './pages/CommunityPage';
-import LectureBookingPage from './pages/LectureBookingPage';
-import { useEffect } from 'react';
+import { Moon, Sun, Menu, X, Sparkles, Home, BookOpen, Users, Phone, User } from 'lucide-react'; // Heart,
+import useIsMobile from './hooks/useIsMobile';
+const HomePage = lazy(() => import('./pages/HomePage'));
+const MyMiraclesPage = lazy(() => import('./pages/MyMiraclesPage'));
+const MargalitsPage = lazy(() => import('./pages/MargalitsPage'));
+const CommunityPage = lazy(() => import('./pages/CommunityPage'));
+const LectureBookingPage = lazy(() => import('./pages/LectureBookingPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
 
 // ==================== STYLED COMPONENTS ====================
 
@@ -410,6 +411,7 @@ function App() {
 	const [mobileMenu, setMobileMenu] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [unreadNotifications, setUnreadNotifications] = useLocalStorage('unreadNotifications', 0);
+	const isMobile = useIsMobile();
 
 	// Simulate page loading
 	const navigatePage = page => {
@@ -424,6 +426,16 @@ function App() {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
+	useEffect(() => {
+		const handleClickOutside = event => {
+			if (isMobile && mobileMenu && !event.target.closest('nav')) {
+				setMobileMenu(false);
+			}
+		};
+
+		document.addEventListener('click', handleClickOutside);
+		return () => document.removeEventListener('click', handleClickOutside);
+	}, [isMobile, mobileMenu]);
 	// Track community submissions
 	const handleCommunitySubmission = () => {
 		setUnreadNotifications(prev => prev + 1);
@@ -446,6 +458,8 @@ function App() {
 		switch (activePage) {
 			case 'home':
 				return <HomePage darkMode={darkMode} onNavigate={navigatePage} />;
+			case 'about':
+				return <AboutPage darkMode={darkMode} />;
 			case 'my-miracles':
 				return <MyMiraclesPage darkMode={darkMode} />;
 			case 'margalits-miracles':
@@ -462,6 +476,7 @@ function App() {
 	// Page data for navigation
 	const pages = [
 		{ id: 'home', label: 'בית', labelTablet: 'בית', icon: Home },
+		{ id: 'about', label: 'אודות', labelTablet: 'אודות', icon: User },
 		// { id: 'margalits-miracles', label: 'הניסים של מרגלית', labelTablet: 'מרגלית', icon: Heart },
 		{ id: 'my-miracles', label: 'הניסים שלי', labelTablet: 'אודה-י-ה', icon: BookOpen },
 		{ id: 'community', label: 'קהילה', labelTablet: 'קהילה', icon: Users, notifications: unreadNotifications },
@@ -549,7 +564,16 @@ function App() {
 						<span>טוען...</span>
 					</LoadingScreen>
 				) : (
-					renderPage()
+					<Suspense
+						fallback={
+							<LoadingScreen darkMode={darkMode}>
+								<Spinner darkMode={darkMode} />
+								<span>טוען...</span>
+							</LoadingScreen>
+						}
+					>
+						{renderPage()}
+					</Suspense>
 				)}
 			</MainContent>
 

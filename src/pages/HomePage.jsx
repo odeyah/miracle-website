@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
+import Newsletter from '../components/Newsletter';
 
 // Animation variants
 const fadeInUp = {
@@ -274,6 +275,7 @@ const HomePage = ({ darkMode, onNavigate }) => {
 					</FeaturesGrid>
 				</FeaturesContainer>
 			</FeaturesSection>
+			<Newsletter />
 		</>
 	);
 };

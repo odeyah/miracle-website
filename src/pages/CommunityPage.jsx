@@ -4,8 +4,26 @@ import { Heart, ChevronDown, Send, Award, Zap } from 'lucide-react';
 import { db } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import SEO from '../components/SEO';
+import { ToastManager, useToast } from '../components/Toast';
+import ShareButtons from '../components/ShareButtons';
+import BookmarkButton from '../components/BookmarkButton';
+import useLocalStorage from '../hooks/useLocalStorage';
+import { motion } from 'framer-motion';
 
 // ==================== STYLED COMPONENTS ====================
+// Animation variants
+const staggerContainer = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: { staggerChildren: 0.1 },
+	},
+};
+
+const cardVariants = {
+	hidden: { opacity: 0, y: 20 },
+	visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+};
 
 const PageSection = styled.section`
 	padding: 2rem 0;
@@ -432,6 +450,7 @@ const CommunityPage = ({ darkMode }) => {
 	const [expandedMiracle, setExpandedMiracle] = useState(null);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedCategory, setSelectedCategory] = useState('all');
+	const { toasts, addToast, removeToast } = useToast();
 	const [communityMiracles, setCommunityMiracles] = useState([
 		{
 			id: 1,
@@ -556,6 +575,7 @@ const CommunityPage = ({ darkMode }) => {
 	const [submitted, setSubmitted] = useState(false);
 	const [firebaseLikes, setFirebaseLikes] = useState({});
 	const [error, setError] = useState(null);
+	const [bookmarks, setBookmarks] = useLocalStorage('community-bookmarks', []);
 
 	// טען את הלייקים מ-Firebase
 	useEffect(() => {
@@ -599,12 +619,12 @@ const CommunityPage = ({ darkMode }) => {
 		e.preventDefault();
 
 		if (!formData.name || !formData.email || !formData.title || !formData.story) {
-			alert('אנא מלא את כל השדות הנדרשים');
+			addToast('אנא מלא את כל השדות הנדרשים', 'error');
 			return;
 		}
 
 		if (formData.name.trim().length < 3) {
-			alert('שם חייב להכיל לפחות 3 אותיות');
+			addToast('שם חייב להכיל לפחות 3 אותיות', 'error');
 			return;
 		}
 
@@ -636,6 +656,7 @@ const CommunityPage = ({ darkMode }) => {
 
 				setCommunityMiracles([newMiracle, ...communityMiracles]);
 				setSubmitted(true);
+				addToast('הסיפור נשלח בהצלחה! תודה רבה', 'success');
 				setFormData({
 					name: '',
 					email: '',
@@ -647,13 +668,15 @@ const CommunityPage = ({ darkMode }) => {
 
 				setTimeout(() => setSubmitted(false), 3000);
 			} else {
-				alert('שגיאה בשליחת הסיפור');
+				addToast('שגיאה בשליחת הסיפור', 'error');
 			}
 		} catch (error) {
 			setError('שגיאה בשליחת הסיפור. נסה שוב.');
 		}
 	};
-
+	const toggleBookmark = id => {
+		setBookmarks(prev => (prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]));
+	};
 	// toggleLike function
 	const toggleLike = async id => {
 		let isLiked;
@@ -695,6 +718,7 @@ const CommunityPage = ({ darkMode }) => {
 
 	return (
 		<PageSection>
+			<ToastManager toasts={toasts} removeToast={removeToast} />
 			<SEO
 				title='קהילת הניסים'
 				description='שתפו את סיפורי הניסים שלכם עם הקהילה. קראו סיפורי ניסים מרגשים של אנשים מכל הארץ.'
@@ -727,7 +751,12 @@ const CommunityPage = ({ darkMode }) => {
 					</button>
 				</div>
 			)}
-			<PageHeader>
+			<PageHeader
+				as={motion.header}
+				initial={{ opacity: 0, y: -20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
+			>
 				<PageTitle>🎁 קהילת הניסים</PageTitle>
 				<PageSubtitle>שתפו את הניסים שלכם עם העולם</PageSubtitle>
 				<PageDescription>
@@ -879,51 +908,70 @@ const CommunityPage = ({ darkMode }) => {
 					<FormTitle darkMode={darkMode}>סיפורי הקהילה</FormTitle>
 
 					{filteredMiracles.length > 0 ? (
-						filteredMiracles.map(miracle => (
-							<MiracleCard key={miracle.id} darkMode={darkMode}>
-								<MiracleCardHeader onClick={() => setExpandedMiracle(expandedMiracle === miracle.id ? null : miracle.id)}>
-									<MiracleIcon>{miracle.icon}</MiracleIcon>
-									<MiracleInfo>
-										<MiracleTitle darkMode={darkMode}>{miracle.title}</MiracleTitle>
-										<MiracleAuthor darkMode={darkMode}>ע"י {miracle.name}</MiracleAuthor>
-										<div>
-											<MiracleCategory darkMode={darkMode}>{miracle.category}</MiracleCategory>
-										</div>
-									</MiracleInfo>
-									<MiracleStats>
-										<Stat darkMode={darkMode}>
-											<Zap size={16} />
-											{miracle.year}
-										</Stat>
-										<IconButton
-											darkMode={darkMode}
-											onClick={e => {
-												e.stopPropagation();
-												toggleLike(miracle.id);
-											}}
+						<motion.div initial='hidden' animate='visible' variants={staggerContainer}>
+							{filteredMiracles.map(miracle => (
+								<motion.div key={miracle.id} variants={cardVariants}>
+									<MiracleCard key={miracle.id} darkMode={darkMode}>
+										<MiracleCardHeader
+											onClick={() => setExpandedMiracle(expandedMiracle === miracle.id ? null : miracle.id)}
 										>
-											<Heart
-												size={20}
-												fill={firebaseLikes[miracle.id] ? '#ef4444' : 'none'}
-												color={firebaseLikes[miracle.id] ? '#ef4444' : 'currentColor'}
+											<MiracleIcon>{miracle.icon}</MiracleIcon>
+											<MiracleInfo>
+												<MiracleTitle darkMode={darkMode}>{miracle.title}</MiracleTitle>
+												<MiracleAuthor darkMode={darkMode}>ע"י {miracle.name}</MiracleAuthor>
+												<div>
+													<MiracleCategory darkMode={darkMode}>{miracle.category}</MiracleCategory>
+												</div>
+											</MiracleInfo>
+											<MiracleStats>
+												<Stat darkMode={darkMode}>
+													<Zap size={16} />
+													{miracle.year}
+												</Stat>
+												<IconButton
+													darkMode={darkMode}
+													onClick={e => {
+														e.stopPropagation();
+														toggleLike(miracle.id);
+													}}
+												>
+													<Heart
+														size={20}
+														fill={firebaseLikes[miracle.id] ? '#ef4444' : 'none'}
+														color={firebaseLikes[miracle.id] ? '#ef4444' : 'currentColor'}
+													/>
+													<BookmarkButton
+														isBookmarked={bookmarks.includes(miracle.id)}
+														onClick={e => {
+															e.stopPropagation();
+															toggleBookmark(miracle.id);
+														}}
+														darkMode={darkMode}
+													/>
+												</IconButton>
+												<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] ? 1 : 0}</Stat>
+											</MiracleStats>
+											<ChevronIcon
+												size={24}
+												expanded={expandedMiracle === miracle.id}
+												style={{
+													marginLeft: '1rem',
+													color: darkMode ? '#e5e7eb' : '#374151',
+												}}
 											/>
-										</IconButton>
-										<Stat darkMode={darkMode}>{firebaseLikes[miracle.id] ? 1 : 0}</Stat>
-									</MiracleStats>
-									<ChevronIcon
-										size={24}
-										expanded={expandedMiracle === miracle.id}
-										style={{
-											marginLeft: '1rem',
-											color: darkMode ? '#e5e7eb' : '#374151',
-										}}
-									/>
-								</MiracleCardHeader>
-								<MiracleContent expanded={expandedMiracle === miracle.id} darkMode={darkMode}>
-									<MiracleStory darkMode={darkMode}>{miracle.story}</MiracleStory>
-								</MiracleContent>
-							</MiracleCard>
-						))
+										</MiracleCardHeader>
+										<MiracleContent expanded={expandedMiracle === miracle.id} darkMode={darkMode}>
+											<MiracleStory darkMode={darkMode}>{miracle.story}</MiracleStory>
+											<ShareButtons
+												title={miracle.title}
+												url={`${window.location.origin}/community#${miracle.id}`}
+												darkMode={darkMode}
+											/>
+										</MiracleContent>
+									</MiracleCard>
+								</motion.div>
+							))}
+						</motion.div>
 					) : (
 						<EmptyState darkMode={darkMode}>
 							<div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📭</div>
