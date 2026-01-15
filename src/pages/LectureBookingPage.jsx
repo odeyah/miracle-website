@@ -4,7 +4,7 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 import SEO from '../components/SEO';
 
 const LectureSection = styled.section`
-	background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+	background: linear-gradient(135deg, #8b5cf6 0%, #2563eb 100%);
 	padding: 4rem 1rem;
 	text-align: center;
 	color: white;
@@ -129,7 +129,7 @@ const FormInput = styled.input`
 
 	&:focus {
 		outline: none;
-		border-color: #a855f7;
+		border-color: #2563eb;
 		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
 	}
 `;
@@ -145,7 +145,7 @@ const FormInput = styled.input`
 
 // 	&:focus {
 // 		outline: none;
-// 		border-color: #a855f7;
+// 		border-color: #2563eb;
 // 		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
 // 	}
 // `;
@@ -168,7 +168,7 @@ const FormTextarea = styled.textarea`
 
 	&:focus {
 		outline: none;
-		border-color: #a855f7;
+		border-color: #2563eb;
 		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
 	}
 `;
@@ -176,7 +176,7 @@ const FormTextarea = styled.textarea`
 const SubmitButton = styled.button`
 	width: 100%;
 	padding: 0.75rem 1rem;
-	background: linear-gradient(to right, #a855f7, #ec4899);
+	background: linear-gradient(to right, #2563eb, #0ea5e9);
 	color: white;
 	font-weight: 700;
 	border: none;
@@ -525,15 +525,15 @@ const LectureBookingPage = ({ darkMode }) => {
 						<ContactTitle darkMode={darkMode}>יצירת קשר ישירה</ContactTitle>
 						<ContactSpace>
 							<ContactItem>
-								<Mail style={{ width: '1.25rem', height: '1.25rem', color: '#a855f7', flexShrink: 0 }} />
+								<Mail style={{ width: '1.25rem', height: '1.25rem', color: '#2563eb', flexShrink: 0 }} />
 								<ContactText darkMode={darkMode}>ourMiracles@proton.me</ContactText>
 							</ContactItem>
 							<ContactItem>
-								<Phone style={{ width: '1.25rem', height: '1.25rem', color: '#a855f7', flexShrink: 0 }} />
+								<Phone style={{ width: '1.25rem', height: '1.25rem', color: '#2563eb', flexShrink: 0 }} />
 								<ContactText darkMode={darkMode}>052-4441093</ContactText>
 							</ContactItem>
 							<ContactItem>
-								<MapPin style={{ width: '1.25rem', height: '1.25rem', color: '#a855f7', flexShrink: 0 }} />
+								<MapPin style={{ width: '1.25rem', height: '1.25rem', color: '#2563eb', flexShrink: 0 }} />
 								<ContactText darkMode={darkMode}>ירושלים, ישראל</ContactText>
 							</ContactItem>
 						</ContactSpace>

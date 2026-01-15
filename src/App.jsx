@@ -2,6 +2,8 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import styled from 'styled-components';
 import { Moon, Sun, Menu, X, Sparkles, Home, BookOpen, Users, Phone, User } from 'lucide-react'; // Heart,
 import useIsMobile from './hooks/useIsMobile';
+import theme from './styles/theme';
+
 const HomePage = lazy(() => import('./pages/HomePage'));
 const MyMiraclesPage = lazy(() => import('./pages/MyMiraclesPage'));
 const MargalitsPage = lazy(() => import('./pages/MargalitsPage'));
@@ -13,8 +15,9 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 
 const AppContainer = styled.div`
 	min-height: 100vh;
-	background-color: ${props => (props.darkMode ? '#111827' : '#ffffff')};
-	color: ${props => (props.darkMode ? '#ffffff' : '#000000')};
+	background-color: ${props => (props.darkMode ? '#1c1917' : '#fafaf9')};
+	color: ${props => (props.darkMode ? '#f5f5f4' : '#1c1917')};
+	font-family: 'David Libre', 'David', 'Noto Serif Hebrew', serif;
 	transition: background-color 0.3s ease, color 0.3s ease;
 	direction: rtl;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
@@ -27,8 +30,8 @@ const AppContainer = styled.div`
 `;
 
 const Navbar = styled.nav`
-	background-color: ${props => (props.darkMode ? '#1f2937' : '#ffffff')};
-	border-bottom: 1px solid ${props => (props.darkMode ? '#374151' : '#e5e7eb')};
+	background-color: ${props => (props.darkMode ? '#292524' : '#ffffff')};
+	border-bottom: 1px solid ${props => (props.darkMode ? '#44403c' : '#e7e5e4')};
 	padding: 1rem 1.5rem;
 	position: sticky;
 	top: 0;
@@ -47,7 +50,7 @@ const NavContainer = styled.div`
 const NavBrand = styled.div`
 	font-size: 1.5rem;
 	font-weight: 700;
-	background: linear-gradient(to right, #a855f7, #ec4899);
+	color: #2563eb;
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -101,9 +104,9 @@ const NavButton = styled.button`
 	font-weight: 500;
 	transition: all 0.3s ease;
 	background-color: ${props =>
-		props.active ? 'linear-gradient(to right, #a855f7, #ec4899)' : props.darkMode ? '#374151' : '#f3f4f6'};
+		props.active ? 'linear-gradient(to right, #2563eb, #0ea5e9)' : props.darkMode ? '#374151' : '#f3f4f6'};
 	color: ${props => (props.active ? '#ffffff' : props.darkMode ? '#e5e7eb' : '#374151')};
-	border: ${props => (props.active ? '2px solid #a855f7' : 'none')};
+	border: ${props => (props.active ? '2px solid #2563eb' : 'none')};
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -123,7 +126,7 @@ const NavButton = styled.button`
 	}
 	&:hover {
 		background-color: ${props =>
-			props.active ? 'linear-gradient(to right, #9333ea, #db2777)' : props.darkMode ? '#4b5563' : '#e5e7eb'};
+			props.active ? 'linear-gradient(to right, #1d4ed8, #0284c7)' : props.darkMode ? '#4b5563' : '#e5e7eb'};
 		transform: translateY(-2px);
 	}
 	@media (max-width: 932px) and (min-width: 768px) {
@@ -178,7 +181,7 @@ const IconButton = styled.button`
 	border-radius: 0.375rem;
 
 	&:hover {
-		color: #a855f7;
+		color: #2563eb;
 		background-color: ${props => (props.darkMode ? '#374151' : '#f3f4f6')};
 	}
 `;
@@ -211,7 +214,7 @@ const MainContent = styled.main`
 `;
 
 const Footer = styled.footer`
-	background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+	background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
 	color: white;
 	padding: 3rem 1rem;
 	margin-top: 4rem;
@@ -311,7 +314,7 @@ const LoadingScreen = styled.div`
 
 const Spinner = styled.div`
 	border: 3px solid ${props => (props.darkMode ? '#374151' : '#e5e7eb')};
-	border-top: 3px solid #a855f7;
+	border-top: 3px solid #2563eb;
 	border-radius: 50%;
 	width: 40px;
 	height: 40px;
@@ -340,7 +343,7 @@ const Breadcrumb = styled.div`
 		background: none;
 		border: none;
 		cursor: pointer;
-		color: #a855f7;
+		color: #2563eb;
 		text-decoration: none;
 		padding: 0;
 		font-size: inherit;

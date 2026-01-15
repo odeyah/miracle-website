@@ -79,7 +79,7 @@ const FilterInput = styled.input`
 
 	&:focus {
 		outline: none;
-		border-color: #a855f7;
+		border-color: #2563eb;
 		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
 	}
 `;
@@ -95,13 +95,13 @@ const SelectInput = styled.select`
 
 	&:focus {
 		outline: none;
-		border-color: #a855f7;
+		border-color: #2563eb;
 		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
 	}
 `;
 
 const MiracleCard = styled.article`
-	background-color: ${props => (props.darkMode ? '#1f2937' : '#ffffff')};
+	background-color: ${props => (props.darkMode ? '#292524' : '#ffffff')};
 	border-radius: 0.75rem;
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 	overflow: hidden;
@@ -119,7 +119,7 @@ const MiracleCardHeader = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	padding: 1.5rem;
-	background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+	background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(14, 165, 233, 0.08));
 	cursor: pointer;
 	gap: 1rem;
 	flex-wrap: wrap;
@@ -166,7 +166,7 @@ const MiracleInfo = styled.div`
 
 const MiracleYear = styled.span`
 	display: inline-block;
-	background-color: #a855f7;
+	background-color: #2563eb;
 	color: white;
 	padding: 0.25rem 0.75rem;
 	border-radius: 9999px;
@@ -250,7 +250,7 @@ const IconButton = styled.button`
 	transition: color 0.3s ease;
 
 	&:hover {
-		color: #8b5cf6;
+		color: #2563eb;
 	}
 `;
 
@@ -296,7 +296,7 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div`
-	background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+	background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
 	border-radius: 0.75rem;
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 	padding: 1.5rem;
@@ -321,7 +321,7 @@ const ChevronIcon = styled(ChevronDown)`
 `;
 
 const PsalmSection = styled.section`
-	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+	background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
 	color: white;
 	padding: 3rem 1rem;
 	text-align: center;
@@ -742,7 +742,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 					<StatLabel darkMode={darkMode}>סה"כ ניסים</StatLabel>
 				</StatCard>
 				<StatCard darkMode={darkMode}>
-					<StatValue color='#ec4899'>{stats.totalFavorites}</StatValue>
+					<StatValue color='#0ea5e9'>{stats.totalFavorites}</StatValue>
 					<StatLabel darkMode={darkMode}>לבבות</StatLabel>
 				</StatCard>
 				<StatCard darkMode={darkMode}>
@@ -835,8 +835,8 @@ const MyMiraclesPage = ({ darkMode }) => {
 											>
 												<Heart
 													size={20}
-													fill={favorites.includes(miracle.id) ? '#ec4899' : 'none'}
-													color={favorites.includes(miracle.id) ? '#ec4899' : 'currentColor'}
+													fill={favorites.includes(miracle.id) ? '#0ea5e9' : 'none'}
+													color={favorites.includes(miracle.id) ? '#0ea5e9' : 'currentColor'}
 												/>
 												<BookmarkButton
 													isBookmarked={bookmarks.includes(miracle.id)}

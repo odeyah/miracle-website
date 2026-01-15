@@ -35,7 +35,7 @@ const ProfileImageContainer = styled(motion.div)`
 	height: 180px;
 	border-radius: 50%;
 	margin: 0 auto 1.5rem;
-	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+	background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
 	padding: 4px;
 	box-shadow: 0 10px 40px rgba(168, 85, 247, 0.3);
 `;
@@ -62,7 +62,7 @@ const Name = styled(motion.h1)`
 	font-size: 2.5rem;
 	font-weight: 700;
 	margin-bottom: 0.5rem;
-	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+	background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
@@ -105,7 +105,7 @@ const SectionTitle = styled.h2`
 	gap: 0.75rem;
 
 	svg {
-		color: #a855f7;
+		color: #2563eb;
 	}
 `;
 
@@ -121,12 +121,12 @@ const Paragraph = styled.p`
 `;
 
 const HighlightText = styled.span`
-	color: #a855f7;
+	color: #2563eb;
 	font-weight: 600;
 `;
 
 const QuoteSection = styled(motion.section)`
-	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+	background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
 	border-radius: 1rem;
 	padding: 2.5rem;
 	margin-bottom: 2rem;
@@ -168,7 +168,7 @@ const HobbyCard = styled.div`
 	}
 
 	svg {
-		color: #a855f7;
+		color: #2563eb;
 	}
 `;
 
@@ -236,11 +236,11 @@ const ContactItem = styled.a`
 	transition: color 0.2s;
 
 	&:hover {
-		color: #a855f7;
+		color: #2563eb;
 	}
 
 	svg {
-		color: #a855f7;
+		color: #2563eb;
 	}
 `;
 

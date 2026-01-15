@@ -79,7 +79,7 @@ const FilterInput = styled.input`
 
 	&:focus {
 		outline: none;
-		border-color: #a855f7;
+		border-color: #2563eb;
 		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
 	}
 `;
@@ -95,7 +95,7 @@ const SelectInput = styled.select`
 
 	&:focus {
 		outline: none;
-		border-color: #a855f7;
+		border-color: #2563eb;
 		box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
 	}
 `;
@@ -166,7 +166,7 @@ const MiracleInfo = styled.div`
 
 const MiracleYear = styled.span`
 	display: inline-block;
-	background-color: #a855f7;
+	background-color: #2563eb;
 	color: white;
 	padding: 0.25rem 0.75rem;
 	border-radius: 9999px;
@@ -296,7 +296,7 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div`
-	background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+	background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
 	border-radius: 0.75rem;
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 	padding: 1.5rem;
@@ -321,7 +321,7 @@ const ChevronIcon = styled(ChevronDown)`
 `;
 
 const PsalmSection = styled.section`
-	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+	background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
 	color: white;
 	padding: 3rem 1rem;
 	text-align: center;
@@ -473,13 +473,20 @@ const MyMiraclesPage = ({ darkMode }) => {
 				story: (
 					<>
 						<p style={{ marginBottom: '0.5rem' }}>
-							בתוך חשכת הבדידות המתמשכת היה לנו נס גדול במיוחד. הכרנו משפחה מארחת מירושלים
-							משפחת סילבר שאימצו אותנו לכל החגים באופן פלאי.</p>
-						<p style={{ marginBottom: '0.5rem' }}>כאם חד הורית שמתמודדת בכל-כך הרבה מישורים	זו הייתה הארה ענקית ועל טבעית</p>
+							בתוך חשכת הבדידות המתמשכת היה לנו נס גדול במיוחד. הכרנו משפחה מארחת מירושלים משפחת סילבר שאימצו אותנו לכל החגים
+							באופן פלאי.
+						</p>
+						<p style={{ marginBottom: '0.5rem' }}>כאם חד הורית שמתמודדת בכל-כך הרבה מישורים זו הייתה הארה ענקית ועל טבעית</p>
 						<p style={{ marginBottom: '0.5rem' }}>הארוח היה ברמה גבוהה ובמאור פנים והרגשנו נהדר.</p>
-						<p style={{ marginBottom: '0.5rem' }}>באחת הפעמים שיתפתי את יעל המארחת בקשיים היומיומיים שאני עוברת והיא המליצה לי על בת שבע מאמנת בשיטת שער הביטחון</p>
-						<p style={{ marginBottom: '0.5rem' }}>במפגש הראשון באתי שבורה והיא שאלה אותי על מה את יכולה להגיד תודה בחיים שלך?</p>
-						<p style={{ marginBottom: '0.5rem' }}>לא הצלחתי למצוא שום דבר להודות עליו. היו לי קשיים בפרנסה, בדידות, קשיים בגידול ילדים לבד בלי שום תמיכה.</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							באחת הפעמים שיתפתי את יעל המארחת בקשיים היומיומיים שאני עוברת והיא המליצה לי על בת שבע מאמנת בשיטת שער הביטחון
+						</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							במפגש הראשון באתי שבורה והיא שאלה אותי על מה את יכולה להגיד תודה בחיים שלך?
+						</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							לא הצלחתי למצוא שום דבר להודות עליו. היו לי קשיים בפרנסה, בדידות, קשיים בגידול ילדים לבד בלי שום תמיכה.
+						</p>
 						<p style={{ marginBottom: '0.5rem' }}>לאחר שהתעקשה ובת שבע מיאנה לוותר לי אמרתי בשפה רפה שאולי על הילדים.</p>
 					</>
 				),
@@ -494,11 +501,17 @@ const MyMiraclesPage = ({ darkMode }) => {
 				story: (
 					<>
 						<p style={{ marginBottom: '0.5rem' }}>מצאתי את עצמי עם 2 ילדים קטנים לבד ובלי משפחה תומכת.</p>
-						<p style={{ marginBottom: '0.5rem' }}>ניסיון מאוד קשה ובכלל לא פשוט, בדידות שמכרסמת ואוכלת את כל הגוף לאט אבל בטוח.</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							ניסיון מאוד קשה ובכלל לא פשוט, בדידות שמכרסמת ואוכלת את כל הגוף לאט אבל בטוח.
+						</p>
 						<p style={{ marginBottom: '0.5rem' }}>גם בתוך החושך הזה ה' אף פעם לא עזב אותי והיה מקור לכל הכוחות כולם.</p>
 						<p style={{ marginBottom: '0.5rem' }}>הוא עטף אותי במעטפת אלוקית של אנשים תומכים:</p>
-						<p style={{ marginBottom: '0.5rem' }}>הרבנית שלי רבקה לוויסון שדאגה להתקשר כמעט כל יום ואילולא היא לא ידעתי חינוך מהו.</p>
-						<p style={{ marginBottom: '0.5rem' }}>משפחות מארחות שהכרנו שהזמינו אותנו לשבתות לפעמים וזה נתן לנו המון שמחה ותקווה</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							הרבנית שלי רבקה לוויסון שדאגה להתקשר כמעט כל יום ואילולא היא לא ידעתי חינוך מהו.
+						</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							משפחות מארחות שהכרנו שהזמינו אותנו לשבתות לפעמים וזה נתן לנו המון שמחה ותקווה
+						</p>
 					</>
 				),
 				category: 'משפחה',
@@ -525,10 +538,16 @@ const MyMiraclesPage = ({ darkMode }) => {
 				title: 'התיכון והסמינר',
 				story: (
 					<>
-						<p style={{ marginBottom: '0.5rem' }}>בשנות התיכון והסמינר, ה' זיכה אותי להכיר משפחות טובות, בריאות וזה היה לי מגדלור לאן לשאוף.</p>
-						<p style={{ marginBottom: '0.5rem' }}>ומזה למדתי שיש דרך אחרת לחיות בה. בסמינר זכיתי לעטיפה מוחלטת של חממה תומכת ואוהבת מכל הבחינות.</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							בשנות התיכון והסמינר, ה' זיכה אותי להכיר משפחות טובות, בריאות וזה היה לי מגדלור לאן לשאוף.
+						</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							ומזה למדתי שיש דרך אחרת לחיות בה. בסמינר זכיתי לעטיפה מוחלטת של חממה תומכת ואוהבת מכל הבחינות.
+						</p>
 						<p style={{ marginBottom: '0.5rem' }}>עד היום אני מרגישה שהנפש שלי טעונה בעומקים של תורה ויראת שמיים.</p>
-						<p style={{ marginBottom: '0.5rem' }}>בזכות הסמינר זכיתי לפגוש משפחות חמות ובריאות, רבניות תומכות ממש "גן עדן" בחוויה של אותם ימים.</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							בזכות הסמינר זכיתי לפגוש משפחות חמות ובריאות, רבניות תומכות ממש "גן עדן" בחוויה של אותם ימים.
+						</p>
 					</>
 				),
 				category: 'הילדות שלי',
@@ -542,9 +561,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 				story: (
 					<>
 						<p style={{ marginBottom: '0.5rem' }}>בתחילת גיל הנערות ה' זימן לי את המורה טובה שכשמה כן היא.</p>
-						<p style={{ marginBottom: '0.5rem' }}>
-							היא מאוד אהבה אותי ונתנה לי המון עידוד ומחמאות שלא קיבלתי עד אז
-						</p>
+						<p style={{ marginBottom: '0.5rem' }}>היא מאוד אהבה אותי ונתנה לי המון עידוד ומחמאות שלא קיבלתי עד אז</p>
 						<p style={{ marginBottom: '0.5rem' }}>
 							השנה הזאת בחטיבה נתנה לי המון כוחות. שמרתי על קשר עם טובה למשך כמה שנים ולאחרונה חידשתי את הקשר.
 						</p>
@@ -560,8 +577,12 @@ const MyMiraclesPage = ({ darkMode }) => {
 				title: 'הילדות שלי',
 				story: (
 					<>
-						<p style={{ marginBottom: '0.5rem' }}>גדלתי בבית עם משפחה חולה וסבלתי התעללויות רבות ובנס עצום יצאתי משם שפוייה ומתפקדת.</p>
-						<p style={{ marginBottom: '0.5rem' }}>בתוך כל החושך תמיד ה' היה איתי וליווה אותי וכשהתפללתי והתחננתי אליו ממש הרגשתי שהוא נותן לי כוח בתוך הניסיון.</p>		
+						<p style={{ marginBottom: '0.5rem' }}>
+							גדלתי בבית עם משפחה חולה וסבלתי התעללויות רבות ובנס עצום יצאתי משם שפוייה ומתפקדת.
+						</p>
+						<p style={{ marginBottom: '0.5rem' }}>
+							בתוך כל החושך תמיד ה' היה איתי וליווה אותי וכשהתפללתי והתחננתי אליו ממש הרגשתי שהוא נותן לי כוח בתוך הניסיון.
+						</p>
 					</>
 				),
 				category: 'הילדות שלי',
@@ -700,7 +721,7 @@ const MyMiraclesPage = ({ darkMode }) => {
 					<StatLabel darkMode={darkMode}>סה"כ ניסים</StatLabel>
 				</StatCard>
 				<StatCard darkMode={darkMode}>
-					<StatValue color='#ec4899'>{stats.totalFavorites}</StatValue>
+					<StatValue color='#0ea5e9'>{stats.totalFavorites}</StatValue>
 					<StatLabel darkMode={darkMode}>לבבות</StatLabel>
 				</StatCard>
 				<StatCard darkMode={darkMode}>
@@ -793,8 +814,8 @@ const MyMiraclesPage = ({ darkMode }) => {
 											>
 												<Heart
 													size={20}
-													fill={favorites.includes(miracle.id) ? '#ec4899' : 'none'}
-													color={favorites.includes(miracle.id) ? '#ec4899' : 'currentColor'}
+													fill={favorites.includes(miracle.id) ? '#0ea5e9' : 'none'}
+													color={favorites.includes(miracle.id) ? '#0ea5e9' : 'currentColor'}
 												/>
 												<BookmarkButton
 													isBookmarked={bookmarks.includes(miracle.id)}

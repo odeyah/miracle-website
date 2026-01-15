@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Mail, Send, CheckCircle } from 'lucide-react';
 
 const NewsletterContainer = styled(motion.div)`
-	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+	background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
 	border-radius: 1rem;
 	padding: 2.5rem;
 	text-align: center;
@@ -77,7 +77,7 @@ const Button = styled(motion.button)`
 	border-radius: 0.5rem;
 	border: none;
 	background: white;
-	color: #a855f7;
+	color: #2563eb;
 	font-size: 1rem;
 	font-weight: 600;
 	cursor: pointer;

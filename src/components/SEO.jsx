@@ -47,7 +47,7 @@ const SEO = ({
 			<meta name='twitter:image' content={`${siteUrl}${image}`} />
 
 			{/* Additional SEO */}
-			<meta name='theme-color' content='#a855f7' />
+			<meta name='theme-color' content='#2563eb' />
 			<meta name='format-detection' content='telephone=yes' />
 			{/* Structured Data */}
 			{type === 'article' && (

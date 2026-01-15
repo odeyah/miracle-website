@@ -30,7 +30,7 @@ const scaleIn = {
 };
 
 const HeroSection = styled.section`
-	background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+	background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
 	padding: 3rem 1rem;
 	text-align: center;
 	color: white;
@@ -100,7 +100,7 @@ const Button = styled.button`
 	cursor: pointer;
 	transition: all 0.3s ease;
 	background-color: ${props => (props.primary ? '#ffffff' : 'rgba(255, 255, 255, 0.2)')};
-	color: ${props => (props.primary ? '#a855f7' : '#ffffff')};
+	color: ${props => (props.primary ? '#2563eb' : '#ffffff')};
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -125,7 +125,7 @@ const Button = styled.button`
 
 const FeaturesSection = styled.section`
 	padding: 4rem 1rem;
-	background-color: ${props => (props.darkMode ? '#1f2937' : '#f9fafb')};
+	background-color: ${props => (props.darkMode ? '#292524' : '#fafaf9')};
 `;
 
 const FeaturesContainer = styled.div`

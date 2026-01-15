@@ -32,7 +32,7 @@ const PageSection = styled.section`
 const PageHeader = styled.div`
 	text-align: center;
 	margin-bottom: 3rem;
-	background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+	background: linear-gradient(135deg, #8b5cf6 0%, #0ea5e9 100%);
 	color: white;
 	padding: 3rem 1rem;
 	border-radius: 1rem;
@@ -203,7 +203,7 @@ const CheckboxLabel = styled.label`
 const SubmitButton = styled.button`
 	width: 100%;
 	padding: 0.875rem 1rem;
-	background: linear-gradient(to right, #8b5cf6, #a855f7);
+	background: linear-gradient(to right, #8b5cf6, #2563eb);
 	color: white;
 	font-weight: 700;
 	border: none;
@@ -365,7 +365,7 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div`
-	background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+	background: linear-gradient(135deg, #8b5cf6 0%, #2563eb 100%);
 	border-radius: 0.75rem;
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 	padding: 1.5rem;
